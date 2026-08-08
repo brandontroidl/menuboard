@@ -48,17 +48,17 @@
                                         <Grid Margin="10,6">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
 
                                             <!-- Optional Image -->
-                                            <Image Grid.Column="0"
-                                                   Source="{Binding ImagePath, Converter={StaticResource ImagePath}}"
-                                                   Width="60" Height="60"
-                                                   Stretch="UniformToFill"
-                                                   Margin="0,0,15,0"
-                                                   Visibility="{Binding ImagePath, Converter={StaticResource ImagePath}, ConverterParameter=visibility}"/>
+                                            <Border Grid.Column="0" Width="60" Height="60" Margin="0,0,15,0"
+                                                    Visibility="{Binding ImagePath, TargetNullValue=Collapsed, FallbackValue=Visible}">
+                                                <Image Source="{Binding ImagePath, Converter={StaticResource ImagePath}}"
+                                                       Stretch="UniformToFill"/>
+                                            </Border>
 
                                             <!-- Item Name -->
                                             <TextBlock Grid.Column="1"
@@ -67,8 +67,17 @@
                                                        Foreground="White"
                                                        VerticalAlignment="Center"/>
 
-                                            <!-- Price -->
+                                            <!-- Dot Leader -->
                                             <TextBlock Grid.Column="2"
+                                                       VerticalAlignment="Center"
+                                                       Foreground="#666"
+                                                       FontSize="20"
+                                                       Margin="8,0"
+                                                       Text="  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ."
+                                                       TextTrimming="CharacterEllipsis"/>
+
+                                            <!-- Price -->
+                                            <TextBlock Grid.Column="3"
                                                        Text="{Binding Price, Converter={StaticResource CentsToDollars}}"
                                                        FontSize="28"
                                                        Foreground="White"

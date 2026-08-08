@@ -33,6 +33,8 @@ public partial class DisplayWindow : Window
             {
                 RootGrid.Background = Brushes.Black;
             }
+
+            RootGrid.LayoutTransform = new ScaleTransform(vm.Settings.FontScale, vm.Settings.FontScale);
         }
     }
 }
