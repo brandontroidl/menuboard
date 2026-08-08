@@ -5,7 +5,6 @@
         WindowStyle="None"
         WindowState="Normal"
         ResizeMode="NoResize"
-        Topmost="True"
         ShowInTaskbar="False">
     <Window.Resources>
         <converters:CentsToDollarsConverter x:Key="CentsToDollars"/>
