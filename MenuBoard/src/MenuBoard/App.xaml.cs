@@ -30,6 +30,8 @@ public partial class App : Application
 
         var adminVm = new AdminViewModel(dataService, imageService);
         var adminWindow = new AdminWindow(adminVm);
+        ShutdownMode = ShutdownMode.OnMainWindowClose;
+        MainWindow = adminWindow;
         adminWindow.Show();
 
         var nonPrimary = monitors.Where(m => !m.IsPrimary).ToList();
