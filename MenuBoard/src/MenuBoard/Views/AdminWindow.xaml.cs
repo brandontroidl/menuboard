@@ -36,12 +36,14 @@ public partial class AdminWindow : Window
 
     private void DisplaySetting_LostFocus(object sender, RoutedEventArgs e)
     {
-        ViewModel.SaveDisplaySettings();
+        if (DataContext is AdminViewModel vm)
+            vm.SaveDisplaySettings();
     }
 
     private void FontScaleSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        ViewModel.SaveDisplaySettings();
+        if (DataContext is AdminViewModel vm)
+            vm.SaveDisplaySettings();
     }
 
     private void ItemField_LostFocus(object sender, RoutedEventArgs e)

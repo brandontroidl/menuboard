@@ -55,7 +55,7 @@
 
                                             <!-- Optional Image -->
                                             <Border Grid.Column="0" Width="60" Height="60" Margin="0,0,15,0"
-                                                    Visibility="{Binding ImagePath, TargetNullValue=Collapsed, FallbackValue=Visible}">
+                                                    Visibility="{Binding ImagePath, Converter={StaticResource ImagePath}, ConverterParameter=visibility}">
                                                 <Image Source="{Binding ImagePath, Converter={StaticResource ImagePath}}"
                                                        Stretch="UniformToFill"/>
                                             </Border>

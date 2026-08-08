@@ -42,11 +42,6 @@ public partial class AdminViewModel : ObservableObject
         LoadDisplaySettings();
     }
 
-    partial void OnSelectedCategoryChanged(Category? value)
-    {
-        OnPropertyChanged(nameof(SelectedCategory));
-    }
-
     public void LoadCategories()
     {
         var cats = _dataService.GetAllCategoriesForScreen(SelectedScreen);
