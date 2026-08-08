@@ -15,4 +15,13 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.*" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- WPF/WinForms-dependent code (System.Windows.Data.IValueConverter, BitmapImage, System.Windows.Forms.Screen).
+         The project targets net8.0 (not net8.0-windows) to build on Linux, so these types don't resolve here.
+         Excluded from compilation until a later task retargets to net8.0-windows and adds UseWPF/UseWindowsForms. -->
+    <Compile Remove="Converters/CentsToDollarsConverter.cs" />
+    <Compile Remove="Converters/ImagePathConverter.cs" />
+    <Compile Remove="Services/MonitorService.cs" />
+  </ItemGroup>
+
 </Project>
