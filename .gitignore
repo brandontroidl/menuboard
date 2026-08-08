@@ -1,0 +1,7 @@
+bin/
+obj/
+TestResults/
+*.user
+publish/
+.superpowers/
+.claude/
