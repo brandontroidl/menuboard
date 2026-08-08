@@ -33,6 +33,11 @@ public partial class AdminViewModel : ObservableObject
 
     partial void OnSelectedScreenChanged(int value)
     {
+        // Persist any pending edits to the previous screen's settings before
+        // they're discarded by the reload below (fields save on LostFocus/
+        // ValueChanged, but a change committed by clicking straight to the
+        // other screen's radio button could otherwise race the reload).
+        _dataService.UpdateDisplaySettings(CurrentDisplaySettings);
         LoadCategories();
         LoadDisplaySettings();
     }
@@ -106,9 +111,10 @@ public partial class AdminViewModel : ObservableObject
     private void AddMenuItem()
     {
         if (SelectedCategory is null) return;
-        _dataService.AddMenuItem(SelectedCategory.Id, "New Item", 0);
+        var catId = SelectedCategory.Id;
+        _dataService.AddMenuItem(catId, "New Item", 0);
         LoadCategories();
-        SelectedCategory = Categories.FirstOrDefault(c => c.Id == SelectedCategory.Id);
+        SelectedCategory = Categories.FirstOrDefault(c => c.Id == catId);
     }
 
     public void SaveMenuItem(MenuItem item)
@@ -169,8 +175,7 @@ public partial class AdminViewModel : ObservableObject
         _dataService.UpdateCategory(category);
     }
 
-    [RelayCommand]
-    private void SaveDisplaySettings()
+    public void SaveDisplaySettings()
     {
         _dataService.UpdateDisplaySettings(CurrentDisplaySettings);
     }
