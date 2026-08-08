@@ -27,8 +27,10 @@
     <Compile Remove="ViewModels/AdminViewModel.cs" />
     <Compile Remove="Views/DisplayWindow.xaml.cs" />
     <Compile Remove="Views/AdminWindow.xaml.cs" />
+    <Compile Remove="App.xaml.cs" />
     <None Remove="Views/DisplayWindow.xaml" />
     <None Remove="Views/AdminWindow.xaml" />
+    <None Remove="App.xaml" />
   </ItemGroup>
 
 </Project>
