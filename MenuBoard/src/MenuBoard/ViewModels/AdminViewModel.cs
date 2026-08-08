@@ -44,6 +44,7 @@ public partial class AdminViewModel : ObservableObject
 
     public void LoadCategories()
     {
+        SelectedCategory = null;
         var cats = _dataService.GetAllCategoriesForScreen(SelectedScreen);
         Categories = new ObservableCollection<Category>(cats);
         SelectedCategory = Categories.FirstOrDefault();
