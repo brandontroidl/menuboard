@@ -4,6 +4,7 @@
         xmlns:converters="clr-namespace:MenuBoard.Converters"
         WindowStyle="None"
         WindowState="Maximized"
+        ResizeMode="NoResize"
         Topmost="True"
         ShowInTaskbar="False">
     <Window.Resources>
@@ -37,8 +38,7 @@
                                        FontSize="36"
                                        FontWeight="Bold"
                                        Foreground="#FFD700"
-                                       Margin="0,0,0,10"
-                                       TextTransform="Uppercase"/>
+                                       Margin="0,0,0,10"/>
                             <Rectangle Height="2" Fill="#FFD700" Margin="0,0,0,10"/>
 
                             <!-- Items -->

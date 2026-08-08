@@ -16,6 +16,7 @@ public partial class DisplayWindow : Window
             if (args.PropertyName == nameof(DisplayViewModel.Settings))
                 ApplySettings();
         };
+        Closed += (_, _) => viewModel.Dispose();
         ApplySettings();
     }
 
