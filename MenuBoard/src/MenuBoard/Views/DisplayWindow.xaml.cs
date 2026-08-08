@@ -1,0 +1,37 @@
+using System.Windows;
+using System.Windows.Media;
+using MenuBoard.ViewModels;
+
+namespace MenuBoard.Views;
+
+public partial class DisplayWindow : Window
+{
+    public DisplayWindow(DisplayViewModel viewModel)
+    {
+        InitializeComponent();
+        DataContext = viewModel;
+
+        viewModel.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(DisplayViewModel.Settings))
+                ApplySettings();
+        };
+        ApplySettings();
+    }
+
+    private void ApplySettings()
+    {
+        if (DataContext is DisplayViewModel vm)
+        {
+            try
+            {
+                var color = (Color)ColorConverter.ConvertFromString(vm.Settings.BackgroundColor);
+                RootGrid.Background = new SolidColorBrush(color);
+            }
+            catch
+            {
+                RootGrid.Background = Brushes.Black;
+            }
+        }
+    }
+}
