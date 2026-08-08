@@ -38,38 +38,51 @@ public partial class App : Application
 
         var nonPrimary = monitors.Where(m => !m.IsPrimary).ToList();
 
+        var displayVm1 = new DisplayViewModel(dataService, 1);
+        var display1 = new DisplayWindow(displayVm1);
+
+        var displayVm2 = new DisplayViewModel(dataService, 2);
+        var display2 = new DisplayWindow(displayVm2);
+
         if (nonPrimary.Count >= 1)
         {
-            var displayVm1 = new DisplayViewModel(dataService, 1);
-            var display1 = new DisplayWindow(displayVm1);
             var bounds1 = nonPrimary[0].Bounds;
             display1.Left = bounds1.Left;
             display1.Top = bounds1.Top;
             display1.Width = bounds1.Width;
             display1.Height = bounds1.Height;
-            display1.Show();
+        }
+        else
+        {
+            OpenAsPreview(display1, "TV 1 Preview - Hot Food");
         }
 
         if (nonPrimary.Count >= 2)
         {
-            var displayVm2 = new DisplayViewModel(dataService, 2);
-            var display2 = new DisplayWindow(displayVm2);
             var bounds2 = nonPrimary[1].Bounds;
             display2.Left = bounds2.Left;
             display2.Top = bounds2.Top;
             display2.Width = bounds2.Width;
             display2.Height = bounds2.Height;
-            display2.Show();
+        }
+        else
+        {
+            OpenAsPreview(display2, "TV 2 Preview - Drinks/Snacks");
         }
 
-        if (nonPrimary.Count < 2)
-        {
-            var missing = 2 - nonPrimary.Count;
-            MessageBox.Show(
-                $"{missing} display monitor(s) not detected. Display windows will open when monitors are connected.",
-                "Menu Board",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
+        display1.Show();
+        display2.Show();
+    }
+
+    private static void OpenAsPreview(DisplayWindow window, string title)
+    {
+        window.WindowStyle = WindowStyle.SingleBorderWindow;
+        window.WindowState = WindowState.Normal;
+        window.Topmost = false;
+        window.ShowInTaskbar = true;
+        window.ResizeMode = ResizeMode.CanResize;
+        window.Title = title;
+        window.Width = 960;
+        window.Height = 540;
     }
 }
