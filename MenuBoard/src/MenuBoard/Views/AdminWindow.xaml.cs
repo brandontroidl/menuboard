@@ -50,7 +50,7 @@ public partial class AdminWindow : Window
 
     private void ItemField_LostFocus(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement fe && fe.Tag is MenuItem item)
+        if (sender is FrameworkElement fe && fe.Tag is MenuItem item && item.Id > 0)
             ViewModel.SaveMenuItem(item);
     }
 
