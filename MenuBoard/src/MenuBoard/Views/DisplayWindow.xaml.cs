@@ -1,6 +1,9 @@
 using System.Windows;
 using System.Windows.Media;
 using MenuBoard.ViewModels;
+using Color = System.Windows.Media.Color;
+using ColorConverter = System.Windows.Media.ColorConverter;
+using Brushes = System.Windows.Media.Brushes;
 
 namespace MenuBoard.Views;
 
