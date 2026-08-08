@@ -109,7 +109,9 @@ public class MenuDataService
 
     public void UpdateMenuItem(MenuItem item)
     {
-        _context.MenuItems.Update(item);
+        var entry = _context.Entry(item);
+        if (entry.State == EntityState.Detached || entry.State == EntityState.Deleted)
+            return;
         _context.SaveChanges();
         DataChanged?.Invoke();
     }
@@ -117,12 +119,16 @@ public class MenuDataService
     public void DeleteMenuItem(int menuItemId)
     {
         var item = _context.MenuItems.Find(menuItemId);
-        if (item is not null)
-        {
-            _context.MenuItems.Remove(item);
-            _context.SaveChanges();
-            DataChanged?.Invoke();
-        }
+        if (item is null)
+            return;
+
+        var entry = _context.Entry(item);
+        if (entry.State == EntityState.Deleted)
+            return;
+
+        _context.MenuItems.Remove(item);
+        _context.SaveChanges();
+        DataChanged?.Invoke();
     }
 
     public void ReorderMenuItem(int menuItemId, int newOrder)
