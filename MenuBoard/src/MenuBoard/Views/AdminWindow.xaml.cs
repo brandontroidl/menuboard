@@ -34,6 +34,16 @@ public partial class AdminWindow : Window
             ViewModel.SaveCategoryName(ViewModel.SelectedCategory);
     }
 
+    private void DisplaySetting_LostFocus(object sender, RoutedEventArgs e)
+    {
+        ViewModel.SaveDisplaySettings();
+    }
+
+    private void FontScaleSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        ViewModel.SaveDisplaySettings();
+    }
+
     private void ItemField_LostFocus(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement fe && fe.Tag is MenuItem item)
@@ -57,11 +67,19 @@ public partial class AdminWindow : Window
             };
             if (dialog.ShowDialog() == true)
             {
-                var relativePath = ViewModel.BrowseAndCopyImage(dialog.FileName);
-                if (relativePath is not null)
+                try
                 {
-                    item.ImagePath = relativePath;
-                    ViewModel.SaveMenuItem(item);
+                    var relativePath = ViewModel.BrowseAndCopyImage(dialog.FileName);
+                    if (relativePath is not null)
+                    {
+                        item.ImagePath = relativePath;
+                        ViewModel.SaveMenuItem(item);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, $"Failed to import image: {ex.Message}",
+                        "Image Import Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }

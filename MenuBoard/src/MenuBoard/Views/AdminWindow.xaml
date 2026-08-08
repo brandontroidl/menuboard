@@ -79,23 +79,24 @@
                         <StackPanel Orientation="Horizontal" Margin="0,5">
                             <TextBlock Text="Header Text:" Width="120" VerticalAlignment="Center"/>
                             <TextBox Text="{Binding CurrentDisplaySettings.HeaderText, UpdateSourceTrigger=PropertyChanged}"
-                                     Width="300" Padding="5,3"/>
+                                     Width="300" Padding="5,3"
+                                     LostFocus="DisplaySetting_LostFocus"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,5">
                             <TextBlock Text="Background Color:" Width="120" VerticalAlignment="Center"/>
                             <TextBox Text="{Binding CurrentDisplaySettings.BackgroundColor, UpdateSourceTrigger=PropertyChanged}"
-                                     Width="100" Padding="5,3"/>
+                                     Width="100" Padding="5,3"
+                                     LostFocus="DisplaySetting_LostFocus"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,5">
                             <TextBlock Text="Font Scale:" Width="120" VerticalAlignment="Center"/>
                             <Slider Value="{Binding CurrentDisplaySettings.FontScale}"
                                     Minimum="0.5" Maximum="2.0" Width="200"
-                                    TickFrequency="0.1" IsSnapToTickEnabled="True"/>
+                                    TickFrequency="0.1" IsSnapToTickEnabled="True"
+                                    ValueChanged="FontScaleSlider_ValueChanged"/>
                             <TextBlock Text="{Binding CurrentDisplaySettings.FontScale, StringFormat={}{0:F1}x}"
                                        Margin="10,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
-                        <Button Content="Apply Settings" Command="{Binding SaveDisplaySettingsCommand}"
-                                Width="120" Margin="0,10,0,0" HorizontalAlignment="Left" Padding="8,5"/>
                     </StackPanel>
                 </Expander>
 
