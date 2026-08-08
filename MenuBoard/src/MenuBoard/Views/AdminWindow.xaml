@@ -1,0 +1,167 @@
+<Window x:Class="MenuBoard.Views.AdminWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:MenuBoard.Converters"
+        Title="Menu Board Admin"
+        Width="1100" Height="700"
+        WindowStartupLocation="CenterScreen"
+        Background="#F5F5F5">
+    <Window.Resources>
+        <converters:CentsToDollarsConverter x:Key="CentsToDollars"/>
+        <converters:NullToCollapsedConverter x:Key="NullToCollapsed"/>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="260"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Left Sidebar -->
+        <Border Grid.Column="0" Background="#2D2D2D" Padding="10">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="Menu Board Admin"
+                           Foreground="White" FontSize="18" FontWeight="Bold"
+                           Margin="5,5,5,15"/>
+
+                <!-- Screen Toggle -->
+                <StackPanel DockPanel.Dock="Top" Margin="0,0,0,15">
+                    <RadioButton x:Name="Screen1Radio" Content="TV 1 - Hot Food"
+                                 Foreground="White" FontSize="14"
+                                 IsChecked="True"
+                                 Checked="Screen1Radio_Checked"
+                                 Margin="5,3" GroupName="Screen"/>
+                    <RadioButton x:Name="Screen2Radio" Content="TV 2 - Drinks/Snacks"
+                                 Foreground="White" FontSize="14"
+                                 Checked="Screen2Radio_Checked"
+                                 Margin="5,3" GroupName="Screen"/>
+                </StackPanel>
+
+                <Separator DockPanel.Dock="Top" Margin="0,0,0,10"/>
+
+                <!-- Category Controls -->
+                <StackPanel DockPanel.Dock="Bottom" Margin="0,5,0,0">
+                    <Button Content="+ Add Category" Command="{Binding AddCategoryCommand}"
+                            Margin="5,3" Padding="8,5" FontSize="13"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5">
+                        <Button Content="Up" Command="{Binding MoveCategoryUpCommand}"
+                                Width="50" Margin="3" Padding="5,3"/>
+                        <Button Content="Down" Command="{Binding MoveCategoryDownCommand}"
+                                Width="50" Margin="3" Padding="5,3"/>
+                        <Button Content="Delete" Command="{Binding DeleteCategoryCommand}"
+                                Width="60" Margin="3" Padding="5,3" Foreground="Red"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Category List -->
+                <ListBox ItemsSource="{Binding Categories}"
+                         SelectedItem="{Binding SelectedCategory}"
+                         Background="Transparent"
+                         Foreground="White"
+                         FontSize="14"
+                         BorderThickness="0"
+                         Margin="5">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" Margin="5,4"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </Border>
+
+        <!-- Right Content Area -->
+        <ScrollViewer Grid.Column="1" Padding="20">
+            <StackPanel>
+                <!-- Display Settings -->
+                <Expander Header="Display Settings" IsExpanded="False" Margin="0,0,0,20">
+                    <StackPanel Margin="10">
+                        <StackPanel Orientation="Horizontal" Margin="0,5">
+                            <TextBlock Text="Header Text:" Width="120" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding CurrentDisplaySettings.HeaderText, UpdateSourceTrigger=PropertyChanged}"
+                                     Width="300" Padding="5,3"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,5">
+                            <TextBlock Text="Background Color:" Width="120" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding CurrentDisplaySettings.BackgroundColor, UpdateSourceTrigger=PropertyChanged}"
+                                     Width="100" Padding="5,3"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,5">
+                            <TextBlock Text="Font Scale:" Width="120" VerticalAlignment="Center"/>
+                            <Slider Value="{Binding CurrentDisplaySettings.FontScale}"
+                                    Minimum="0.5" Maximum="2.0" Width="200"
+                                    TickFrequency="0.1" IsSnapToTickEnabled="True"/>
+                            <TextBlock Text="{Binding CurrentDisplaySettings.FontScale, StringFormat={}{0:F1}x}"
+                                       Margin="10,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <Button Content="Apply Settings" Command="{Binding SaveDisplaySettingsCommand}"
+                                Width="120" Margin="0,10,0,0" HorizontalAlignment="Left" Padding="8,5"/>
+                    </StackPanel>
+                </Expander>
+
+                <!-- Selected Category Content -->
+                <StackPanel Visibility="{Binding SelectedCategory, Converter={StaticResource NullToCollapsed}, FallbackValue=Collapsed}">
+                    <!-- Category Name -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                        <TextBlock Text="Category:" FontSize="16" FontWeight="Bold"
+                                   VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <TextBox x:Name="CategoryNameBox"
+                                 Text="{Binding SelectedCategory.Name, UpdateSourceTrigger=PropertyChanged}"
+                                 FontSize="16" Width="300" Padding="5,3"
+                                 LostFocus="CategoryNameBox_LostFocus"/>
+                    </StackPanel>
+
+                    <!-- Add Item Button -->
+                    <Button Content="+ Add Item" Command="{Binding AddMenuItemCommand}"
+                            HorizontalAlignment="Left" Padding="10,5" Margin="0,0,0,15"/>
+
+                    <!-- Items List -->
+                    <ItemsControl ItemsSource="{Binding SelectedCategory.Items}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="#DDD" BorderThickness="0,0,0,1"
+                                        Padding="5,8" Margin="0,2">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="200"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBox Grid.Column="0" Text="{Binding Name, UpdateSourceTrigger=LostFocus}"
+                                                 Padding="5,3" Margin="0,0,5,0"
+                                                 LostFocus="ItemField_LostFocus" Tag="{Binding}"/>
+                                        <TextBox Grid.Column="1" Text="{Binding Price, Converter={StaticResource CentsToDollars}, UpdateSourceTrigger=LostFocus}"
+                                                 Padding="5,3" Margin="0,0,5,0"
+                                                 LostFocus="ItemField_LostFocus" Tag="{Binding}"/>
+                                        <TextBox Grid.Column="2" Text="{Binding Description, UpdateSourceTrigger=LostFocus}"
+                                                 Padding="5,3" Margin="0,0,5,0"
+                                                 LostFocus="ItemField_LostFocus" Tag="{Binding}"/>
+                                        <Button Grid.Column="3" Content="Image"
+                                                Click="BrowseImage_Click" Tag="{Binding}"
+                                                Padding="5,3" Margin="0,0,5,0"/>
+                                        <CheckBox Grid.Column="4" IsChecked="{Binding IsAvailable}"
+                                                  Content="Available" VerticalAlignment="Center"
+                                                  Margin="0,0,10,0"
+                                                  Click="AvailableToggle_Click" Tag="{Binding}"/>
+                                        <StackPanel Grid.Column="5" Orientation="Horizontal">
+                                            <Button Content="^" Click="MoveItemUp_Click" Tag="{Binding}"
+                                                    Width="25" Margin="2,0" Padding="2"/>
+                                            <Button Content="v" Click="MoveItemDown_Click" Tag="{Binding}"
+                                                    Width="25" Margin="2,0" Padding="2"/>
+                                            <Button Content="X" Click="DeleteItem_Click" Tag="{Binding}"
+                                                    Width="25" Margin="2,0" Padding="2" Foreground="Red"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>
