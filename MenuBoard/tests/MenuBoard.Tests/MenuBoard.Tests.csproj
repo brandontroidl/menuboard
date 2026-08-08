@@ -20,4 +20,12 @@
     <ProjectReference Include="..\..\src\MenuBoard\MenuBoard.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Targets MenuBoard.Converters.CentsToDollarsConverter, which references System.Windows.Data.IValueConverter.
+         That type doesn't resolve because MenuBoard.csproj targets net8.0 (not net8.0-windows) to build on Linux,
+         and the converter source itself is excluded from compilation there (see MenuBoard.csproj). Excluded here
+         to match, until a later task retargets both projects to net8.0-windows and enables UseWPF. -->
+    <Compile Remove="Converters/CentsToDollarsConverterTests.cs" />
+  </ItemGroup>
+
 </Project>
