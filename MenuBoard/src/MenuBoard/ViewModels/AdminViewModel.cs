@@ -1,0 +1,177 @@
+using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using MenuBoard.Models;
+using MenuBoard.Services;
+
+namespace MenuBoard.ViewModels;
+
+public partial class AdminViewModel : ObservableObject
+{
+    private readonly MenuDataService _dataService;
+    private readonly ImageService _imageService;
+
+    [ObservableProperty]
+    private int _selectedScreen = 1;
+
+    [ObservableProperty]
+    private ObservableCollection<Category> _categories = new();
+
+    [ObservableProperty]
+    private Category? _selectedCategory;
+
+    [ObservableProperty]
+    private DisplaySettings _currentDisplaySettings = new();
+
+    public AdminViewModel(MenuDataService dataService, ImageService imageService)
+    {
+        _dataService = dataService;
+        _imageService = imageService;
+        LoadCategories();
+        LoadDisplaySettings();
+    }
+
+    partial void OnSelectedScreenChanged(int value)
+    {
+        LoadCategories();
+        LoadDisplaySettings();
+    }
+
+    partial void OnSelectedCategoryChanged(Category? value)
+    {
+        OnPropertyChanged(nameof(SelectedCategory));
+    }
+
+    public void LoadCategories()
+    {
+        var cats = _dataService.GetAllCategoriesForScreen(SelectedScreen);
+        Categories = new ObservableCollection<Category>(cats);
+        SelectedCategory = Categories.FirstOrDefault();
+    }
+
+    private void LoadDisplaySettings()
+    {
+        CurrentDisplaySettings = _dataService.GetDisplaySettings(SelectedScreen);
+    }
+
+    [RelayCommand]
+    private void AddCategory()
+    {
+        var category = _dataService.AddCategory("New Category", SelectedScreen);
+        LoadCategories();
+        SelectedCategory = Categories.FirstOrDefault(c => c.Id == category.Id);
+    }
+
+    [RelayCommand]
+    private void DeleteCategory()
+    {
+        if (SelectedCategory is null) return;
+        _dataService.DeleteCategory(SelectedCategory.Id);
+        LoadCategories();
+    }
+
+    [RelayCommand]
+    private void MoveCategoryUp()
+    {
+        if (SelectedCategory is null) return;
+        var index = Categories.IndexOf(SelectedCategory);
+        if (index <= 0) return;
+
+        var prev = Categories[index - 1];
+        var currentOrder = SelectedCategory.DisplayOrder;
+        _dataService.ReorderCategory(SelectedCategory.Id, prev.DisplayOrder);
+        _dataService.ReorderCategory(prev.Id, currentOrder);
+        var selectedId = SelectedCategory.Id;
+        LoadCategories();
+        SelectedCategory = Categories.FirstOrDefault(c => c.Id == selectedId);
+    }
+
+    [RelayCommand]
+    private void MoveCategoryDown()
+    {
+        if (SelectedCategory is null) return;
+        var index = Categories.IndexOf(SelectedCategory);
+        if (index >= Categories.Count - 1) return;
+
+        var next = Categories[index + 1];
+        var currentOrder = SelectedCategory.DisplayOrder;
+        _dataService.ReorderCategory(SelectedCategory.Id, next.DisplayOrder);
+        _dataService.ReorderCategory(next.Id, currentOrder);
+        var selectedId = SelectedCategory.Id;
+        LoadCategories();
+        SelectedCategory = Categories.FirstOrDefault(c => c.Id == selectedId);
+    }
+
+    [RelayCommand]
+    private void AddMenuItem()
+    {
+        if (SelectedCategory is null) return;
+        _dataService.AddMenuItem(SelectedCategory.Id, "New Item", 0);
+        LoadCategories();
+        SelectedCategory = Categories.FirstOrDefault(c => c.Id == SelectedCategory.Id);
+    }
+
+    public void SaveMenuItem(MenuItem item)
+    {
+        _dataService.UpdateMenuItem(item);
+    }
+
+    public void DeleteMenuItem(int menuItemId)
+    {
+        _dataService.DeleteMenuItem(menuItemId);
+        if (SelectedCategory is not null)
+        {
+            var catId = SelectedCategory.Id;
+            LoadCategories();
+            SelectedCategory = Categories.FirstOrDefault(c => c.Id == catId);
+        }
+    }
+
+    public void MoveMenuItemUp(MenuItem item)
+    {
+        if (SelectedCategory is null) return;
+        var items = SelectedCategory.Items.OrderBy(i => i.DisplayOrder).ToList();
+        var index = items.IndexOf(item);
+        if (index <= 0) return;
+
+        var prev = items[index - 1];
+        var currentOrder = item.DisplayOrder;
+        _dataService.ReorderMenuItem(item.Id, prev.DisplayOrder);
+        _dataService.ReorderMenuItem(prev.Id, currentOrder);
+        var catId = SelectedCategory.Id;
+        LoadCategories();
+        SelectedCategory = Categories.FirstOrDefault(c => c.Id == catId);
+    }
+
+    public void MoveMenuItemDown(MenuItem item)
+    {
+        if (SelectedCategory is null) return;
+        var items = SelectedCategory.Items.OrderBy(i => i.DisplayOrder).ToList();
+        var index = items.IndexOf(item);
+        if (index >= items.Count - 1) return;
+
+        var next = items[index + 1];
+        var currentOrder = item.DisplayOrder;
+        _dataService.ReorderMenuItem(item.Id, next.DisplayOrder);
+        _dataService.ReorderMenuItem(next.Id, currentOrder);
+        var catId = SelectedCategory.Id;
+        LoadCategories();
+        SelectedCategory = Categories.FirstOrDefault(c => c.Id == catId);
+    }
+
+    public string? BrowseAndCopyImage(string sourcePath)
+    {
+        return _imageService.CopyImageToStore(sourcePath);
+    }
+
+    public void SaveCategoryName(Category category)
+    {
+        _dataService.UpdateCategory(category);
+    }
+
+    [RelayCommand]
+    private void SaveDisplaySettings()
+    {
+        _dataService.UpdateDisplaySettings(CurrentDisplaySettings);
+    }
+}

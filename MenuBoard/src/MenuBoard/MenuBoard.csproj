@@ -21,10 +21,14 @@
          Excluded from compilation until a later task retargets to net8.0-windows and adds UseWPF/UseWindowsForms. -->
     <Compile Remove="Converters/CentsToDollarsConverter.cs" />
     <Compile Remove="Converters/ImagePathConverter.cs" />
+    <Compile Remove="Converters/NullToCollapsedConverter.cs" />
     <Compile Remove="Services/MonitorService.cs" />
     <Compile Remove="ViewModels/DisplayViewModel.cs" />
+    <Compile Remove="ViewModels/AdminViewModel.cs" />
     <Compile Remove="Views/DisplayWindow.xaml.cs" />
+    <Compile Remove="Views/AdminWindow.xaml.cs" />
     <None Remove="Views/DisplayWindow.xaml" />
+    <None Remove="Views/AdminWindow.xaml" />
   </ItemGroup>
 
 </Project>
