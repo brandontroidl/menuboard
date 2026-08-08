@@ -22,6 +22,9 @@
     <Compile Remove="Converters/CentsToDollarsConverter.cs" />
     <Compile Remove="Converters/ImagePathConverter.cs" />
     <Compile Remove="Services/MonitorService.cs" />
+    <Compile Remove="ViewModels/DisplayViewModel.cs" />
+    <Compile Remove="Views/DisplayWindow.xaml.cs" />
+    <None Remove="Views/DisplayWindow.xaml" />
   </ItemGroup>
 
 </Project>
