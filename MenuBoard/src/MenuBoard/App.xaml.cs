@@ -27,8 +27,6 @@ public partial class App : Application
 
         var dataService = new MenuDataService(context);
         var imageService = new ImageService();
-        var monitorService = new MonitorService();
-        var monitors = monitorService.GetMonitors();
 
         var adminVm = new AdminViewModel(dataService, imageService);
         var adminWindow = new AdminWindow(adminVm);
@@ -36,6 +34,8 @@ public partial class App : Application
         MainWindow = adminWindow;
         adminWindow.Show();
 
+        var monitorService = new MonitorService();
+        var monitors = monitorService.GetMonitors();
         var nonPrimary = monitors.Where(m => !m.IsPrimary).ToList();
 
         var displayVm1 = new DisplayViewModel(dataService, 1);
@@ -46,11 +46,7 @@ public partial class App : Application
 
         if (nonPrimary.Count >= 1)
         {
-            var bounds1 = nonPrimary[0].Bounds;
-            display1.Left = bounds1.Left;
-            display1.Top = bounds1.Top;
-            display1.Width = bounds1.Width;
-            display1.Height = bounds1.Height;
+            PlaceOnMonitor(display1, nonPrimary[0].Bounds);
         }
         else
         {
@@ -59,11 +55,7 @@ public partial class App : Application
 
         if (nonPrimary.Count >= 2)
         {
-            var bounds2 = nonPrimary[1].Bounds;
-            display2.Left = bounds2.Left;
-            display2.Top = bounds2.Top;
-            display2.Width = bounds2.Width;
-            display2.Height = bounds2.Height;
+            PlaceOnMonitor(display2, nonPrimary[1].Bounds);
         }
         else
         {
@@ -74,10 +66,17 @@ public partial class App : Application
         display2.Show();
     }
 
+    private static void PlaceOnMonitor(DisplayWindow window, Rect bounds)
+    {
+        window.Left = bounds.Left;
+        window.Top = bounds.Top;
+        window.Width = bounds.Width;
+        window.Height = bounds.Height;
+    }
+
     private static void OpenAsPreview(DisplayWindow window, string title)
     {
         window.WindowStyle = WindowStyle.SingleBorderWindow;
-        window.WindowState = WindowState.Normal;
         window.Topmost = false;
         window.ShowInTaskbar = true;
         window.ResizeMode = ResizeMode.CanResize;

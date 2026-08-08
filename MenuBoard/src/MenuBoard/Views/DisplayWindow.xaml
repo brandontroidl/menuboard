@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:converters="clr-namespace:MenuBoard.Converters"
         WindowStyle="None"
-        WindowState="Maximized"
+        WindowState="Normal"
         ResizeMode="NoResize"
         Topmost="True"
         ShowInTaskbar="False">
