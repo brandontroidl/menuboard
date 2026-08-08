@@ -1,5 +1,7 @@
 using System.IO;
 using System.Windows;
+using Application = System.Windows.Application;
+using MessageBox = System.Windows.MessageBox;
 using Microsoft.EntityFrameworkCore;
 using MenuBoard.Data;
 using MenuBoard.Services;
