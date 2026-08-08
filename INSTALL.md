@@ -11,38 +11,26 @@
 
 1. Clone or download the repository.
 
-2. Open a terminal in the project root and prepare the project for Windows:
-
-   Edit `MenuBoard/src/MenuBoard/MenuBoard.csproj`:
-   - Change `<TargetFramework>net8.0</TargetFramework>` to `<TargetFramework>net8.0-windows</TargetFramework>`
-   - Add `<UseWPF>true</UseWPF>` and `<UseWindowsForms>true</UseWindowsForms>` inside `<PropertyGroup>`
-   - Change `<OutputType>Library</OutputType>` to `<OutputType>WinExe</OutputType>`
-   - Remove the `<Compile Remove>` and `<None Remove>` ItemGroup blocks (these excluded WPF files for Linux development)
-
-   Edit `MenuBoard/tests/MenuBoard.Tests/MenuBoard.Tests.csproj`:
-   - Change `<TargetFramework>net8.0</TargetFramework>` to `<TargetFramework>net8.0-windows</TargetFramework>`
-   - Remove any `<Compile Remove>` blocks
-
-3. Build the solution:
+2. Build the solution:
 
    ```
    cd MenuBoard
    dotnet build
    ```
 
-4. Run the tests:
+3. Run the tests:
 
    ```
    dotnet test
    ```
 
-5. Publish a standalone executable:
+4. Publish a standalone executable:
 
    ```
    dotnet publish src/MenuBoard -c Release -o publish
    ```
 
-6. The published application is in the `MenuBoard/publish/` directory. Copy the entire folder to the target PC.
+5. The published application is in the `MenuBoard/publish/` directory. Run `MenuBoard.exe` from there, or copy the folder to the target PC.
 
 ## Option 2: Run from Build Output
 
