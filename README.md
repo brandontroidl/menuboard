@@ -1,6 +1,6 @@
 # Menu Board
 
-A Windows desktop application that drives two TVs as digital menu boards for a convenience store. One PC runs the app, which opens an admin editor on the primary monitor and two fullscreen menu displays on the secondary and tertiary monitors.
+A Windows desktop application that drives two TVs as digital menu boards for a convenience store. One PC runs the app, which opens an admin editor plus two fullscreen menu displays - one per TV.
 
 ## Features
 
@@ -8,14 +8,15 @@ A Windows desktop application that drives two TVs as digital menu boards for a c
 - **Built-in admin editor** - Add, edit, remove, and reorder categories and menu items. Upload images for featured items. All changes save instantly.
 - **List-style layout** - Clean, high-contrast design with dot leaders between item names and prices. Readable from 10+ feet.
 - **Configurable per-screen** - Set header text, background color, and font scale independently for each TV.
-- **Automatic monitor detection** - Places display windows on the correct monitors at startup. Works gracefully if fewer than 3 monitors are connected.
+- **Flexible monitor layout** - Works with a PC hooked up to just the two TVs, or with an extra admin monitor. Automatic detection, plus a swap toggle if the menus come up on the wrong TVs. Press Esc or double-click a menu display to bring the admin editor to the front.
+- **Kiosk-friendly** - "Start with Windows" checkbox for auto-launch on boot, and closing the admin window asks for confirmation so the TVs don't go blank by accident.
 - **Local and offline** - Everything runs on the local machine with a SQLite database. No internet required.
 
 ## Requirements
 
 - Windows 10 or later
-- .NET 8 Runtime (Desktop)
-- Two additional monitors/TVs connected to the PC
+- .NET 8 Runtime (Desktop) - not needed if you publish self-contained (see INSTALL.md)
+- Two TVs connected to the PC (an additional admin monitor is optional)
 
 ## Quick Start
 

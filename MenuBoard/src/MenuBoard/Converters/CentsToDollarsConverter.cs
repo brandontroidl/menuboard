@@ -16,10 +16,12 @@ public class CentsToDollarsConverter : IValueConverter
     {
         if (value is string s)
         {
-            s = s.TrimStart('$');
-            if (decimal.TryParse(s, NumberStyles.Number, CultureInfo.InvariantCulture, out var dollars))
-                return (int)(dollars * 100);
+            s = s.Replace("$", "").Replace(",", "").Trim();
+            if (decimal.TryParse(s, NumberStyles.Number, CultureInfo.InvariantCulture, out var dollars) && dollars >= 0)
+                return (int)Math.Round(dollars * 100);
         }
-        return 0;
+        // Unparseable input: keep the item's existing price instead of
+        // silently resetting it to $0.00.
+        return System.Windows.Data.Binding.DoNothing;
     }
 }

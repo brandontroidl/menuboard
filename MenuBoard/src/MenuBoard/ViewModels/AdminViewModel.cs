@@ -10,6 +10,11 @@ public partial class AdminViewModel : ObservableObject
 {
     private readonly MenuDataService _dataService;
     private readonly ImageService _imageService;
+    private readonly AppSettingsService _appSettings;
+    private readonly StartupService _startupService;
+
+    /// <summary>Raised when monitor layout or swap settings change so the app can reposition the display windows.</summary>
+    public event Action? MonitorSettingsChanged;
 
     [ObservableProperty]
     private int _selectedScreen = 1;
@@ -23,12 +28,62 @@ public partial class AdminViewModel : ObservableObject
     [ObservableProperty]
     private DisplaySettings _currentDisplaySettings = new();
 
-    public AdminViewModel(MenuDataService dataService, ImageService imageService)
+    [ObservableProperty]
+    private bool _startWithWindows;
+
+    [ObservableProperty]
+    private bool _swapDisplays;
+
+    [ObservableProperty]
+    private int _monitorLayoutIndex;
+
+    private bool _suppressSettingCallbacks;
+
+    public AdminViewModel(MenuDataService dataService, ImageService imageService,
+        AppSettingsService appSettings, StartupService startupService)
     {
         _dataService = dataService;
         _imageService = imageService;
+        _appSettings = appSettings;
+        _startupService = startupService;
+
+        _suppressSettingCallbacks = true;
+        StartWithWindows = _startupService.IsEnabled();
+        SwapDisplays = _appSettings.Settings.SwapDisplays;
+        MonitorLayoutIndex = (int)_appSettings.Settings.MonitorLayout;
+        _suppressSettingCallbacks = false;
+
         LoadCategories();
         LoadDisplaySettings();
+    }
+
+    partial void OnStartWithWindowsChanged(bool value)
+    {
+        if (_suppressSettingCallbacks) return;
+        if (!_startupService.SetEnabled(value))
+        {
+            // Registry write failed - revert the checkbox to reality.
+            _suppressSettingCallbacks = true;
+            StartWithWindows = _startupService.IsEnabled();
+            _suppressSettingCallbacks = false;
+        }
+    }
+
+    partial void OnSwapDisplaysChanged(bool value)
+    {
+        if (_suppressSettingCallbacks) return;
+        _appSettings.Settings.SwapDisplays = value;
+        _appSettings.Save();
+        MonitorSettingsChanged?.Invoke();
+    }
+
+    partial void OnMonitorLayoutIndexChanged(int value)
+    {
+        if (_suppressSettingCallbacks) return;
+        if (value < 0 || value > (int)MonitorLayout.AllMonitors) return;
+        _appSettings.Settings.MonitorLayout = (MonitorLayout)value;
+        _appSettings.Save();
+        MonitorSettingsChanged?.Invoke();
     }
 
     partial void OnSelectedScreenChanged(int value)

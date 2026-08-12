@@ -20,6 +20,16 @@ public partial class DisplayWindow : Window
                 ApplySettings();
         };
         Closed += (_, _) => viewModel.Dispose();
+
+        // When the menus cover every monitor, these are the escape hatches
+        // back to the admin editor.
+        KeyDown += (_, args) =>
+        {
+            if (args.Key == System.Windows.Input.Key.Escape)
+                App.Current.ActivateAdmin();
+        };
+        MouseDoubleClick += (_, _) => App.Current.ActivateAdmin();
+
         ApplySettings();
     }
 

@@ -100,6 +100,28 @@
                     </StackPanel>
                 </Expander>
 
+                <!-- App Settings -->
+                <Expander Header="App Settings" IsExpanded="False" Margin="0,0,0,20">
+                    <StackPanel Margin="10">
+                        <CheckBox Content="Start Menu Board automatically when Windows starts"
+                                  IsChecked="{Binding StartWithWindows}"
+                                  Margin="0,5"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,5">
+                            <TextBlock Text="Monitor layout:" Width="120" VerticalAlignment="Center"/>
+                            <ComboBox SelectedIndex="{Binding MonitorLayoutIndex}" Width="300">
+                                <ComboBoxItem Content="Automatic (recommended)"/>
+                                <ComboBoxItem Content="Admin monitor + TVs on other monitors"/>
+                                <ComboBoxItem Content="Menu boards on all monitors"/>
+                            </ComboBox>
+                        </StackPanel>
+                        <CheckBox Content="Swap which TV shows Hot Food vs Drinks/Snacks"
+                                  IsChecked="{Binding SwapDisplays}"
+                                  Margin="0,5"/>
+                        <TextBlock Margin="0,8,0,0" Foreground="#666" TextWrapping="Wrap"
+                                   Text="Tip: if the menu boards cover every monitor, press Esc or double-click a menu display to bring this admin window back to the front."/>
+                    </StackPanel>
+                </Expander>
+
                 <!-- Selected Category Content -->
                 <StackPanel Visibility="{Binding SelectedCategory, Converter={StaticResource NullToCollapsed}, FallbackValue=Collapsed}">
                     <!-- Category Name -->
