@@ -42,4 +42,25 @@ public class CentsToDollarsConverterTests
         var result = _converter.ConvertBack("5.99", typeof(int), null!, CultureInfo.InvariantCulture);
         Assert.AreEqual(599, result);
     }
+
+    [TestMethod]
+    public void ConvertBack_ThousandsSeparator_ReturnsCents()
+    {
+        var result = _converter.ConvertBack("$1,234.50", typeof(int), null!, CultureInfo.InvariantCulture);
+        Assert.AreEqual(123450, result);
+    }
+
+    [TestMethod]
+    public void ConvertBack_Garbage_KeepsExistingValue()
+    {
+        var result = _converter.ConvertBack("abc", typeof(int), null!, CultureInfo.InvariantCulture);
+        Assert.AreEqual(System.Windows.Data.Binding.DoNothing, result);
+    }
+
+    [TestMethod]
+    public void ConvertBack_Negative_KeepsExistingValue()
+    {
+        var result = _converter.ConvertBack("-5.00", typeof(int), null!, CultureInfo.InvariantCulture);
+        Assert.AreEqual(System.Windows.Data.Binding.DoNothing, result);
+    }
 }

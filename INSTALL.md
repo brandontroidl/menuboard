@@ -24,13 +24,16 @@
    dotnet test
    ```
 
-4. Publish a standalone executable:
+4. Publish a standalone executable (from the `MenuBoard` folder in PowerShell):
 
    ```
-   dotnet publish src/MenuBoard -c Release -o publish
+   .\publish.ps1                  # store PC needs the .NET 8 Desktop Runtime
+   .\publish.ps1 -SelfContained   # bigger, but nothing to install on the store PC
    ```
 
 5. The published application is in the `MenuBoard/publish/` directory. Run `MenuBoard.exe` from there, or copy the folder to the target PC.
+
+   > Updating an existing install? Your menu data lives next to the exe (`menuboard.db`, `Images\`, `settings.json`). Back those up first and copy them into the new publish folder.
 
 ## Option 2: Run from Build Output
 
@@ -45,11 +48,12 @@ dotnet run --project src/MenuBoard
 
 ### Monitor Configuration
 
-The application expects three monitors:
+The application supports both common setups (chosen automatically):
 
-1. **Primary monitor** - The admin editor opens here. This can be a regular monitor or laptop screen.
-2. **Second monitor** - TV1 (Hot Food / Meals). Connect via HDMI, DisplayPort, or similar.
-3. **Third monitor** - TV2 (Drinks / Snacks). Connect via HDMI, DisplayPort, or similar.
+- **PC + two TVs only (typical store setup)** - Both TVs show fullscreen menus. The admin editor runs behind them; press Esc or double-click a menu display to bring it to the front.
+- **PC with its own monitor + two TVs** - The admin editor stays on the primary monitor and the TVs each show a fullscreen menu.
+
+You can override this under **App Settings → Monitor layout** in the admin editor, and use **Swap** if Hot Food and Drinks/Snacks come up on the wrong TVs.
 
 Configure all monitors in Windows Display Settings (right-click desktop, Display settings). Ensure each TV is set to "Extend" mode, not "Duplicate."
 
@@ -65,10 +69,10 @@ On first launch, the application:
 1. Creates a `menuboard.db` SQLite database next to the executable
 2. Creates an `Images/` folder for menu item photos
 3. Seeds default display settings for both screens
-4. Opens the admin window on the primary monitor
-5. Opens fullscreen display windows on any detected secondary/tertiary monitors
+4. Opens the admin window
+5. Opens fullscreen display windows on the detected monitors (see Monitor Configuration above)
 
-If fewer than 3 monitors are connected, the app shows a notice and opens display windows only for the monitors it finds. The admin editor always works regardless of how many monitors are connected.
+With only one monitor connected (e.g., testing on a laptop), the menu displays open as regular resizable preview windows instead. The admin editor always works regardless of how many monitors are connected.
 
 ## Updating Menu Content
 
@@ -95,11 +99,9 @@ Expand "Display Settings" in the admin editor to configure each TV:
 
 ## Auto-Start on Boot
 
-To have the menu board start automatically when the PC boots:
+In the admin editor, expand **App Settings** and check **"Start Menu Board automatically when Windows starts."** That's it - the app registers itself in the current user's startup entries.
 
-1. Press `Win+R`, type `shell:startup`, press Enter
-2. Create a shortcut to `MenuBoard.exe` in the Startup folder
-3. The app will launch automatically on login
+(Manual alternative: press `Win+R`, type `shell:startup`, press Enter, and create a shortcut to `MenuBoard.exe` there.)
 
 For unattended kiosk operation, also consider:
 - Setting Windows to auto-login (netplwiz)
@@ -111,6 +113,12 @@ For unattended kiosk operation, also consider:
 **TVs show nothing / display windows don't appear**
 - Check Windows Display Settings - TVs must be in "Extend" mode, not "Duplicate"
 - Restart the application after connecting monitors
+
+**Menus are on the wrong TVs (Hot Food where Drinks should be)**
+- In the admin editor, expand App Settings and check "Swap which TV shows Hot Food vs Drinks/Snacks"
+
+**Can't get back to the admin editor (menus cover every screen)**
+- Press Esc or double-click on either menu display
 
 **Text is too small / too large on the TVs**
 - Adjust the Font Scale slider in Display Settings (expand the section in the admin editor)

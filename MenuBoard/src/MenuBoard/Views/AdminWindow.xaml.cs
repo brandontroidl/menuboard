@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using MenuBoard.ViewModels;
@@ -16,6 +17,29 @@ public partial class AdminWindow : Window
     {
         InitializeComponent();
         DataContext = viewModel;
+    }
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+        // Closing the admin window shuts down the whole app, including both
+        // TV displays. Confirm so the store operator doesn't blank the TVs
+        // by accident - minimizing keeps the menus running.
+        var result = MessageBox.Show(this,
+            "Exit Menu Board? This will close both TV displays.\n\n" +
+            "Yes  -  exit the app (TVs go blank)\n" +
+            "No   -  keep the menus running and minimize this window instead",
+            "Exit Menu Board",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning,
+            MessageBoxResult.No);
+
+        if (result != MessageBoxResult.Yes)
+        {
+            e.Cancel = true;
+            WindowState = WindowState.Minimized;
+        }
+
+        base.OnClosing(e);
     }
 
     private void Screen1Radio_Checked(object sender, RoutedEventArgs e)
