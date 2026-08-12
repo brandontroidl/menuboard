@@ -18,6 +18,15 @@ A Windows desktop application that drives two TVs as digital menu boards for a c
 - .NET 8 Runtime (Desktop) - not needed if you publish self-contained (see INSTALL.md)
 - Two TVs connected to the PC (an additional admin monitor is optional)
 
+## Documentation
+
+| Doc | For | What's in it |
+|---|---|---|
+| [INSTALL.md](INSTALL.md) | Installer / IT | Build, publish, hardware setup, auto-start, troubleshooting |
+| [docs/USER-GUIDE.md](docs/USER-GUIDE.md) | Store staff | Everyday how-to: prices, items, pictures, sold-out, backups |
+| [docs/TECHNICAL.md](docs/TECHNICAL.md) | Developers | Architecture, data model, build/test, known limitations |
+| [docs/HANDOFF.md](docs/HANDOFF.md) | Next owner | Runbooks (install, update, backup/restore, emergencies), maintenance |
+
 ## Quick Start
 
 1. Download the latest release or build from source (see INSTALL.md)
