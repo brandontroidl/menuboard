@@ -18,7 +18,11 @@ jobs:
       - name: test
         run: dotnet test MenuBoard -c Release
       - name: publish self-contained win-x64
-        run: dotnet publish MenuBoard/src/MenuBoard -c Release -r win-x64 --self-contained true -o publish
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          $version = $env:TAG.TrimStart('v')
+          dotnet publish MenuBoard/src/MenuBoard -c Release -r win-x64 --self-contained true -o publish -p:Version=$version
       - name: zip
         env:
           TAG: ${{ github.ref_name }}
