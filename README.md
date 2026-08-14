@@ -1,5 +1,7 @@
 # Menu Board
 
+[![ci](https://github.com/brandontroidl/menuboard/actions/workflows/ci.yml/badge.svg)](https://github.com/brandontroidl/menuboard/actions/workflows/ci.yml)
+
 A Windows desktop application that drives two TVs as digital menu boards for a convenience store. One PC runs the app, which opens an admin editor plus two fullscreen menu displays - one per TV.
 
 ## Features
@@ -29,7 +31,7 @@ A Windows desktop application that drives two TVs as digital menu boards for a c
 
 ## Quick Start
 
-1. Download the latest release or build from source (see INSTALL.md)
+1. Download the [latest release](https://github.com/brandontroidl/menuboard/releases) or build from source (see INSTALL.md)
 2. Connect two TVs to your PC (in addition to your primary monitor)
 3. Run `MenuBoard.exe`
 4. The admin editor opens on your primary monitor
