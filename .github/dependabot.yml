@@ -4,6 +4,10 @@ updates:
     directory: /MenuBoard
     schedule:
       interval: weekly
+    ignore:
+      # stay on the majors that match .net 8 lts (efcore 8.x); take minors/patches
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
   - package-ecosystem: github-actions
     directory: /
     schedule:
