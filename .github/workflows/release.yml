@@ -1,0 +1,30 @@
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 8.0.x
+      - name: test
+        run: dotnet test MenuBoard -c Release
+      - name: publish self-contained win-x64
+        run: dotnet publish MenuBoard/src/MenuBoard -c Release -r win-x64 --self-contained true -o publish
+      - name: zip
+        env:
+          TAG: ${{ github.ref_name }}
+        run: Compress-Archive -Path publish\* -DestinationPath "MenuBoard-$env:TAG-win-x64.zip"
+      - name: create github release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: gh release create "$env:TAG" "MenuBoard-$env:TAG-win-x64.zip" --title "MenuBoard $env:TAG" --generate-notes
