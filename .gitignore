@@ -6,6 +6,8 @@ publish/
 
 # IDE
 .vs/
+.idea/
+.vscode/
 *.user
 
 # runtime data the app creates next to the exe - never commit real store data
