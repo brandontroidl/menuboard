@@ -1,7 +1,17 @@
+# build output
 bin/
 obj/
 TestResults/
-*.user
 publish/
+
+# IDE
+.vs/
+*.user
+
+# runtime data the app creates next to the exe - never commit real store data
+menuboard.db*
+settings.json
+
+# AI tooling config
 .superpowers/
 .claude/
