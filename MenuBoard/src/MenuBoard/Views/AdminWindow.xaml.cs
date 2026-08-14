@@ -54,6 +54,32 @@ public partial class AdminWindow : Window
             vm.SelectedScreen = 2;
     }
 
+    private void DeleteCategory_Click(object sender, RoutedEventArgs e)
+    {
+        var category = ViewModel.SelectedCategory;
+        if (category is null)
+            return;
+
+        // Category delete cascades to its items and there is no undo, so
+        // confirm with the item count at risk before executing.
+        var itemCount = category.Items.Count;
+        var detail = itemCount switch
+        {
+            0 => "It has no items.",
+            1 => "The 1 item in it will be deleted too.",
+            _ => $"All {itemCount} items in it will be deleted too."
+        };
+        var result = MessageBox.Show(this,
+            $"Delete the category \"{category.Name}\"? {detail}",
+            "Delete Category",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning,
+            MessageBoxResult.No);
+
+        if (result == MessageBoxResult.Yes)
+            ViewModel.DeleteCategoryCommand.Execute(null);
+    }
+
     private void CategoryNameBox_LostFocus(object sender, RoutedEventArgs e)
     {
         if (ViewModel.SelectedCategory is not null)
