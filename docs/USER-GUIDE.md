@@ -44,7 +44,7 @@ Use pictures sparingly - a few featured items with photos looks better than a ph
 - **Add:** click **+ Add Category** in the sidebar, then type the name in the "Category:" box on the right.
 - **Rename:** select the category, edit the "Category:" box.
 - **Reorder:** select it and use the **Up** / **Down** buttons at the bottom of the sidebar.
-- **Delete:** select it and click **Delete**. This also deletes all items inside it, so double-check first.
+- **Delete:** select it, click **Delete**, and confirm. This also deletes all items inside it - the confirmation tells you how many.
 
 ### Reorder items within a category
 Use the **^** and **v** buttons on each item row.

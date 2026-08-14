@@ -58,7 +58,7 @@ Schema caution: the database schema is created once and never auto-upgraded (no 
 
 ### 4.3 Backup and restore
 
-- **Backup** (do this on a schedule - it's the entire menu): copy `menuboard.db` + `Images\` (+ `settings.json` for completeness) to a USB stick or cloud folder. Safe to do while the app runs; safer with it closed.
+- **Backup** (do this on a schedule - it's the entire menu): copy `menuboard.db` + `Images\` (+ `settings.json` for completeness) to a USB stick or cloud folder. Close the app first - a copy of the database taken mid-write can be inconsistent.
 - **Restore:** close the app, copy the files back next to `MenuBoard.exe`, start the app.
 - **Factory reset:** close the app, delete `menuboard.db`, start the app - it recreates an empty database with default display settings.
 

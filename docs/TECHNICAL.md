@@ -109,7 +109,7 @@ On a non-Windows CI/build agent, compilation works with `-p:EnableWindowsTargeti
 - `AppSettingsServiceTests` - defaults, save/reload round-trip, corrupt-file fallback.
 - `MenuItemTests` - model/relationship basics.
 
-Not covered (would need UI automation): window placement, XAML bindings, the exit-confirmation flow.
+Not covered (would need UI automation): window placement, XAML bindings, the exit and category-delete confirmation flows.
 
 ## Known limitations & gotchas
 

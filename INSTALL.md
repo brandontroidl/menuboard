@@ -31,7 +31,7 @@
    .\publish.ps1 -SelfContained   # bigger, but nothing to install on the store PC
    ```
 
-5. The published application is in the `MenuBoard/publish/` directory. Run `MenuBoard.exe` from there, or copy the folder to the target PC.
+5. The published application is in the `MenuBoard/publish/` directory. Run `MenuBoard.exe` from there, or copy the folder to a user-writable location on the target PC (e.g. `C:\MenuBoard`, not `C:\Program Files` - the app writes its database, images, and settings next to the exe).
 
    > Updating an existing install? Your menu data lives next to the exe (`menuboard.db`, `Images\`, `settings.json`). Back those up first and copy them into the new publish folder.
 
