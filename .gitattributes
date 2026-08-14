@@ -1,0 +1,4 @@
+# normalize line endings; keep windows-conventional files crlf in working copies
+* text=auto
+*.sln text eol=crlf
+*.ps1 text eol=crlf
