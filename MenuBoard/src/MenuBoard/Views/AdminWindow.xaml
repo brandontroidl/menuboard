@@ -48,7 +48,7 @@
                                 Width="50" Margin="3" Padding="5,3"/>
                         <Button Content="Down" Command="{Binding MoveCategoryDownCommand}"
                                 Width="50" Margin="3" Padding="5,3"/>
-                        <Button Content="Delete" Command="{Binding DeleteCategoryCommand}"
+                        <Button Content="Delete" Click="DeleteCategory_Click"
                                 Width="60" Margin="3" Padding="5,3" Foreground="Red"/>
                     </StackPanel>
                 </StackPanel>
