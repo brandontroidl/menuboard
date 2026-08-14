@@ -60,7 +60,7 @@ public class MenuDataServiceTests
         service.AddCategory("Drinks", 2);
 
         var screen1 = service.GetCategoriesForScreen(1);
-        Assert.AreEqual(1, screen1.Count);
+        Assert.HasCount(1, screen1);
         Assert.AreEqual("Burgers", screen1[0].Name);
     }
 
@@ -78,7 +78,7 @@ public class MenuDataServiceTests
         service.UpdateMenuItem(item2);
 
         var categories = service.GetCategoriesForScreen(1);
-        Assert.AreEqual(1, categories[0].Items.Count);
+        Assert.HasCount(1, categories[0].Items);
         Assert.AreEqual("Visible", categories[0].Items.First().Name);
     }
 
@@ -94,7 +94,7 @@ public class MenuDataServiceTests
         service.DataChanged += () => eventFired = true;
         service.DeleteCategory(cat.Id);
 
-        Assert.AreEqual(0, service.GetCategoriesForScreen(1).Count);
+        Assert.IsEmpty(service.GetCategoriesForScreen(1));
         Assert.IsTrue(eventFired);
     }
 

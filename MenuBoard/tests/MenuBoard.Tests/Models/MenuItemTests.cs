@@ -23,7 +23,7 @@ public class MenuItemTests
         context.Seed();
 
         var settings = context.DisplaySettings.OrderBy(s => s.ScreenNumber).ToList();
-        Assert.AreEqual(2, settings.Count);
+        Assert.HasCount(2, settings);
         Assert.AreEqual(1, settings[0].ScreenNumber);
         Assert.AreEqual("Hot Food & Meals", settings[0].HeaderText);
         Assert.AreEqual(2, settings[1].ScreenNumber);
