@@ -79,7 +79,7 @@ Your entire menu lives in two things, both in the same folder as `MenuBoard.exe`
 1. `menuboard.db` - all items, prices, categories, and settings
 2. the `Images` folder - all item photos
 
-Copy both to a USB stick every so often. To restore, copy them back into the folder next to `MenuBoard.exe` (with the app closed) and start the app.
+Close Menu Board first (X, then Yes), then copy both to a USB stick. Do this every so often. To restore, copy them back into the folder next to `MenuBoard.exe` (with the app closed) and start the app.
 
 ## Quick troubleshooting
 
