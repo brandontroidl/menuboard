@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.30" />
-    <PackageReference Include="MSTest" Version="4.0.1" />
+    <PackageReference Include="MSTest" Version="4.3.3" />
   </ItemGroup>
 
   <ItemGroup>
