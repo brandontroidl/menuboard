@@ -27,6 +27,8 @@ AdminWindow edit → MenuDataService.SaveChanges() → DataChanged event
     → DisplayViewModel.Refresh() (marshalled to its Dispatcher) → UI rebinds
 ```
 
+Refresh must hand the ViewModel **new object instances** each time - the entities have no `INotifyPropertyChanged`, so change notification rides entirely on the ViewModel's property setters detecting a different reference. Categories get a new `ObservableCollection`; settings come from `GetDisplaySettingsSnapshot` (`AsNoTracking`), because the tracked `GetDisplaySettings` returns the *same* instance every call and would silently suppress theme updates.
+
 ## Solution layout
 
 ```
@@ -69,13 +71,15 @@ The schema is created with `EnsureCreated()` - **there are no EF migrations**. S
 
 `App.ApplyMonitorLayout()` (safe to re-run at runtime; the admin's settings raise `MonitorSettingsChanged` to trigger it):
 
-1. Enumerate monitors (`MonitorService`, WinForms `Screen.AllScreens`, divided by the primary window's DPI scale to get WPF units).
-2. Decide the TV pool per `settings.json`:
+1. Enumerate monitors (`MonitorService`, WinForms `Screen.AllScreens`, divided by the primary window's DPI scale to get WPF units), sorted left-to-right then top-to-bottom - this ordering defines "Monitor 1..N" everywhere in the UI and in `settings.json`.
+2. **Explicit picks win:** `Tv1Monitor` / `Tv2Monitor` in `settings.json` (set via the App Settings pickers; -1 = automatic) pin a TV to a monitor index. Out-of-range indices (monitor unplugged) fall back to automatic.
+3. For any TV still unassigned, build the automatic pool per `MonitorLayout`:
    - `Auto` (default): 2 monitors total → **both** are TVs (store PC hooked straight to the TVs); 3+ → non-primary monitors are TVs, primary keeps the admin.
    - `AdminPlusTvs`: non-primary only.
    - `AllMonitors`: every monitor, primary included.
-3. Sort the pool left-to-right (then top-to-bottom); `SwapDisplays` reverses it.
-4. Assign TV 1 → first, TV 2 → second. A TV without a monitor becomes a preview window.
+   `SwapDisplays` reverses the pool; monitors already claimed by explicit picks are removed from it.
+4. Assign TV 1 → first available, TV 2 → next. A TV without a monitor becomes a preview window.
+5. `MoveAdminOffTvMonitors`: if some monitor is free of TVs but the admin window's center sits on a TV-covered monitor, the admin window is repositioned to the free monitor (the "console" screen).
 
 Escape hatch when menus cover every screen: `DisplayWindow` handles Esc and double-click by calling `App.ActivateAdmin()`, which restores/activates the admin and briefly toggles `Topmost` to hop above the borderless fullscreen windows.
 
@@ -85,7 +89,7 @@ Escape hatch when menus cover every screen: `DisplayWindow` handles Esc and doub
 |---|---|---|
 | Menu content + display settings | `menuboard.db` | Immediately on every edit (`SaveChanges`) |
 | Item photos | `Images/` (GUID filenames) | On image pick (copied; originals untouched; never deleted by the app) |
-| Monitor layout / swap | `settings.json` | On change in App Settings |
+| Monitor layout / swap / per-TV monitor picks | `settings.json` | On change in App Settings |
 | Auto-start | HKCU Run key `MenuBoard` → quoted `Environment.ProcessPath` | On checkbox toggle |
 
 All of it lives next to the exe, so an install is fully portable: copy the folder, and the menu goes with it.

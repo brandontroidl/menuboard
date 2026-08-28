@@ -40,7 +40,7 @@ A Windows desktop app (.NET 8 / WPF) that turns a PC and two TVs into digital me
 2. Copy the whole `publish\` folder to the store PC (e.g., `C:\MenuBoard\`).
 3. Connect both TVs, set Windows display mode to **Extend**, TVs at 1920x1080, landscape.
 4. Run `MenuBoard.exe`. Admin opens on the PC screen; a fullscreen menu appears on each TV.
-5. If the menus are on the wrong TVs: App Settings → "Swap which TV shows Hot Food vs Drinks/Snacks".
+5. If the menus are on the wrong TVs or not fullscreen where expected: App Settings → "Swap which TV shows Hot Food vs Drinks/Snacks", or pin each menu with the "TV 1 monitor" / "TV 2 monitor" pickers.
 6. App Settings → check **"Start Menu Board automatically when Windows starts"**.
 7. Kiosk hardening (recommended): auto-login (`netplwiz`), power plan set to never sleep, Windows Update active hours set to store hours.
 8. Reboot once to confirm everything comes back by itself.

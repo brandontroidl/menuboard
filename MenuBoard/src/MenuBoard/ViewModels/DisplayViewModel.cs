@@ -43,7 +43,10 @@ public partial class DisplayViewModel : ObservableObject, IDisposable
 
         var cats = _dataService.GetCategoriesForScreen(_screenNumber);
         Categories = new ObservableCollection<Category>(cats);
-        Settings = _dataService.GetDisplaySettings(_screenNumber);
+        // Snapshot, not the tracked instance: a fresh object per refresh is
+        // what makes the Settings property raise PropertyChanged so the
+        // window re-applies background/header/font scale immediately.
+        Settings = _dataService.GetDisplaySettingsSnapshot(_screenNumber);
     }
 
     public void Dispose()

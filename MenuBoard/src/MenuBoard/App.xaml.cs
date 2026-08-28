@@ -1,6 +1,7 @@
 using System.IO;
 using System.Windows;
 using Application = System.Windows.Application;
+using Point = System.Windows.Point;
 using Microsoft.EntityFrameworkCore;
 using MenuBoard.Data;
 using MenuBoard.Services;
@@ -37,7 +38,7 @@ public partial class App : Application
         _settingsService = new AppSettingsService();
         _monitorService = new MonitorService();
 
-        var adminVm = new AdminViewModel(dataService, imageService, _settingsService, new StartupService());
+        var adminVm = new AdminViewModel(dataService, imageService, _settingsService, new StartupService(), _monitorService);
         adminVm.MonitorSettingsChanged += ApplyMonitorLayout;
         _adminWindow = new AdminWindow(adminVm);
         ShutdownMode = ShutdownMode.OnMainWindowClose;
@@ -62,25 +63,41 @@ public partial class App : Application
         if (_display1 is null || _display2 is null)
             return;
 
-        var monitors = _monitorService.GetMonitors();
-        var layout = _settingsService.Settings.MonitorLayout;
+        var settings = _settingsService.Settings;
+        var monitors = _monitorService.GetMonitorsSorted();
 
-        // "Auto" with exactly 2 monitors assumes a store PC hooked up to just
-        // the two TVs - use both for menus. With 3+ monitors, keep the
-        // primary for the admin editor.
-        var useAllMonitors = layout == MonitorLayout.AllMonitors
-            || (layout == MonitorLayout.Auto && monitors.Count == 2);
+        // Explicit per-TV picks win (from App Settings). Out-of-range picks
+        // (e.g., a monitor was unplugged) fall back to automatic.
+        var tv1 = settings.Tv1Monitor >= 0 && settings.Tv1Monitor < monitors.Count
+            ? monitors[settings.Tv1Monitor] : null;
+        var tv2 = settings.Tv2Monitor >= 0 && settings.Tv2Monitor < monitors.Count
+            ? monitors[settings.Tv2Monitor] : null;
 
-        var targets = (useAllMonitors ? monitors : monitors.Where(m => !m.IsPrimary))
-            .OrderBy(m => m.Bounds.Left)
-            .ThenBy(m => m.Bounds.Top)
-            .ToList();
+        // Automatic pool for any TV without an explicit pick. "Auto" with
+        // exactly 2 monitors assumes a store PC hooked up to just the two
+        // TVs - use both for menus. With 3+ monitors, keep the primary for
+        // the admin editor.
+        var useAllMonitors = settings.MonitorLayout == MonitorLayout.AllMonitors
+            || (settings.MonitorLayout == MonitorLayout.Auto && monitors.Count == 2);
 
-        if (_settingsService.Settings.SwapDisplays)
-            targets.Reverse();
+        var pool = (useAllMonitors ? monitors : monitors.Where(m => !m.IsPrimary)).ToList();
+        if (settings.SwapDisplays)
+            pool.Reverse();
+        pool.RemoveAll(m => m == tv1 || m == tv2);
 
-        AssignMonitor(_display1, targets.ElementAtOrDefault(0), "TV 1 Preview - Hot Food");
-        AssignMonitor(_display2, targets.ElementAtOrDefault(1), "TV 2 Preview - Drinks/Snacks");
+        if (tv1 is null && pool.Count > 0)
+        {
+            tv1 = pool[0];
+            pool.RemoveAt(0);
+        }
+        if (tv2 is null && pool.Count > 0)
+        {
+            tv2 = pool[0];
+        }
+
+        AssignMonitor(_display1, tv1, "TV 1 Preview - Hot Food");
+        AssignMonitor(_display2, tv2, "TV 2 Preview - Drinks/Snacks");
+        MoveAdminOffTvMonitors(monitors, tv1, tv2);
     }
 
     /// <summary>
@@ -103,6 +120,34 @@ public partial class App : Application
         _adminWindow.Topmost = true;
         _adminWindow.Topmost = false;
         _adminWindow.Focus();
+    }
+
+    /// <summary>
+    /// If a monitor is left over for the admin "console" and the admin
+    /// window currently sits on a monitor covered by a fullscreen TV, move
+    /// it to the free monitor so the console screen actually shows it.
+    /// </summary>
+    private void MoveAdminOffTvMonitors(List<MonitorInfo> monitors, MonitorInfo? tv1, MonitorInfo? tv2)
+    {
+        if (_adminWindow is null)
+            return;
+
+        var free = monitors.FirstOrDefault(m => m != tv1 && m != tv2);
+        if (free is null)
+            return;
+
+        var adminCenter = new Point(
+            _adminWindow.Left + _adminWindow.Width / 2,
+            _adminWindow.Top + _adminWindow.Height / 2);
+
+        var coveredByTv = (tv1?.Bounds.Contains(adminCenter) ?? false)
+            || (tv2?.Bounds.Contains(adminCenter) ?? false);
+        if (!coveredByTv)
+            return;
+
+        _adminWindow.WindowState = WindowState.Normal;
+        _adminWindow.Left = free.Bounds.Left + Math.Max(0, (free.Bounds.Width - _adminWindow.Width) / 2);
+        _adminWindow.Top = free.Bounds.Top + Math.Max(0, (free.Bounds.Height - _adminWindow.Height) / 2);
     }
 
     private static void AssignMonitor(DisplayWindow window, MonitorInfo? monitor, string previewTitle)

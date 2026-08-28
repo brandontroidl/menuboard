@@ -13,6 +13,18 @@ public class MonitorInfo
 
 public class MonitorService
 {
+    /// <summary>
+    /// Monitors in a stable, user-predictable order: left-to-right, then
+    /// top-to-bottom. "Monitor 1" in the admin UI is always the leftmost.
+    /// </summary>
+    public List<MonitorInfo> GetMonitorsSorted()
+    {
+        return GetMonitors()
+            .OrderBy(m => m.Bounds.Left)
+            .ThenBy(m => m.Bounds.Top)
+            .ToList();
+    }
+
     public List<MonitorInfo> GetMonitors()
     {
         var dpiScale = GetDpiScale();

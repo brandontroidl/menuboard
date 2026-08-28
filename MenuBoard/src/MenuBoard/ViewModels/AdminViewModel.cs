@@ -12,6 +12,7 @@ public partial class AdminViewModel : ObservableObject
     private readonly ImageService _imageService;
     private readonly AppSettingsService _appSettings;
     private readonly StartupService _startupService;
+    private readonly MonitorService _monitorService;
 
     /// <summary>Raised when monitor layout or swap settings change so the app can reposition the display windows.</summary>
     public event Action? MonitorSettingsChanged;
@@ -37,24 +38,69 @@ public partial class AdminViewModel : ObservableObject
     [ObservableProperty]
     private int _monitorLayoutIndex;
 
+    /// <summary>ComboBox items for the per-TV monitor pickers: "Automatic" followed by each detected monitor.</summary>
+    public ObservableCollection<string> MonitorOptions { get; } = new();
+
+    /// <summary>0 = Automatic; n = monitor n (left-to-right) for TV 1.</summary>
+    [ObservableProperty]
+    private int _tv1MonitorOption;
+
+    /// <summary>0 = Automatic; n = monitor n (left-to-right) for TV 2.</summary>
+    [ObservableProperty]
+    private int _tv2MonitorOption;
+
     private bool _suppressSettingCallbacks;
 
     public AdminViewModel(MenuDataService dataService, ImageService imageService,
-        AppSettingsService appSettings, StartupService startupService)
+        AppSettingsService appSettings, StartupService startupService, MonitorService monitorService)
     {
         _dataService = dataService;
         _imageService = imageService;
         _appSettings = appSettings;
         _startupService = startupService;
+        _monitorService = monitorService;
+
+        MonitorOptions.Add("Automatic");
+        var monitors = _monitorService.GetMonitorsSorted();
+        for (var i = 0; i < monitors.Count; i++)
+        {
+            var label = $"Monitor {i + 1} of {monitors.Count} (left to right)";
+            if (monitors[i].IsPrimary)
+                label += " - primary";
+            MonitorOptions.Add(label);
+        }
 
         _suppressSettingCallbacks = true;
         StartWithWindows = _startupService.IsEnabled();
         SwapDisplays = _appSettings.Settings.SwapDisplays;
         MonitorLayoutIndex = (int)_appSettings.Settings.MonitorLayout;
+        Tv1MonitorOption = ToOptionIndex(_appSettings.Settings.Tv1Monitor, monitors.Count);
+        Tv2MonitorOption = ToOptionIndex(_appSettings.Settings.Tv2Monitor, monitors.Count);
         _suppressSettingCallbacks = false;
 
         LoadCategories();
         LoadDisplaySettings();
+    }
+
+    private static int ToOptionIndex(int monitorIndex, int monitorCount)
+    {
+        return monitorIndex >= 0 && monitorIndex < monitorCount ? monitorIndex + 1 : 0;
+    }
+
+    partial void OnTv1MonitorOptionChanged(int value)
+    {
+        if (_suppressSettingCallbacks || value < 0) return;
+        _appSettings.Settings.Tv1Monitor = value - 1;
+        _appSettings.Save();
+        MonitorSettingsChanged?.Invoke();
+    }
+
+    partial void OnTv2MonitorOptionChanged(int value)
+    {
+        if (_suppressSettingCallbacks || value < 0) return;
+        _appSettings.Settings.Tv2Monitor = value - 1;
+        _appSettings.Save();
+        MonitorSettingsChanged?.Invoke();
     }
 
     partial void OnStartWithWindowsChanged(bool value)

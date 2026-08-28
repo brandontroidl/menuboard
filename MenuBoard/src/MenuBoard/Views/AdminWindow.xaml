@@ -117,8 +117,18 @@
                         <CheckBox Content="Swap which TV shows Hot Food vs Drinks/Snacks"
                                   IsChecked="{Binding SwapDisplays}"
                                   Margin="0,5"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,5">
+                            <TextBlock Text="TV 1 monitor:" Width="120" VerticalAlignment="Center"/>
+                            <ComboBox ItemsSource="{Binding MonitorOptions}"
+                                      SelectedIndex="{Binding Tv1MonitorOption}" Width="300"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,5">
+                            <TextBlock Text="TV 2 monitor:" Width="120" VerticalAlignment="Center"/>
+                            <ComboBox ItemsSource="{Binding MonitorOptions}"
+                                      SelectedIndex="{Binding Tv2MonitorOption}" Width="300"/>
+                        </StackPanel>
                         <TextBlock Margin="0,8,0,0" Foreground="#666" TextWrapping="Wrap"
-                                   Text="Tip: if the menu boards cover every monitor, press Esc or double-click a menu display to bring this admin window back to the front."/>
+                                   Text="Picking a monitor for each TV overrides the automatic layout - use this if a menu opens on the wrong screen or as a small window. Monitors are numbered left to right as arranged in Windows Display Settings. If the admin window's screen gets taken by a TV, the admin moves itself to the free screen. Tip: if the menu boards cover every monitor, press Esc or double-click a menu display to bring this admin window back to the front."/>
                     </StackPanel>
                 </Expander>
 

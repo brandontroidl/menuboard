@@ -27,8 +27,17 @@ public class AppSettings
 {
     public MonitorLayout MonitorLayout { get; set; } = MonitorLayout.Auto;
 
-    /// <summary>Swap which physical monitor shows TV 1 vs TV 2.</summary>
+    /// <summary>Swap which physical monitor shows TV 1 vs TV 2 (applies to automatic assignment).</summary>
     public bool SwapDisplays { get; set; }
+
+    /// <summary>
+    /// Explicit monitor for TV 1 as a zero-based index into the monitors
+    /// sorted left-to-right; -1 = automatic. Overrides the layout logic.
+    /// </summary>
+    public int Tv1Monitor { get; set; } = -1;
+
+    /// <summary>Explicit monitor for TV 2; -1 = automatic.</summary>
+    public int Tv2Monitor { get; set; } = -1;
 }
 
 /// <summary>

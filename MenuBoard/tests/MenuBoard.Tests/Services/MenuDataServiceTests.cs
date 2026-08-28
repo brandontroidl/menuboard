@@ -109,4 +109,26 @@ public class MenuDataServiceTests
         Assert.AreEqual("Hot Food & Meals", settings.HeaderText);
         Assert.AreEqual("#000000", settings.BackgroundColor);
     }
+
+    [TestMethod]
+    public void GetDisplaySettingsSnapshot_ReturnsFreshInstanceWithLatestValues()
+    {
+        var dbName = Guid.NewGuid().ToString();
+        using var context = CreateContext(dbName);
+        var service = new MenuDataService(context);
+
+        var first = service.GetDisplaySettingsSnapshot(1);
+
+        var tracked = service.GetDisplaySettings(1);
+        tracked.BackgroundColor = "#1a1a2e";
+        service.UpdateDisplaySettings(tracked);
+
+        var second = service.GetDisplaySettingsSnapshot(1);
+
+        // A fresh instance each call is what lets the display ViewModel's
+        // property setter detect a change and re-apply the theme.
+        Assert.AreNotSame(first, second);
+        Assert.AreNotSame(tracked, second);
+        Assert.AreEqual("#1a1a2e", second.BackgroundColor);
+    }
 }

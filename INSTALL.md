@@ -53,7 +53,7 @@ The application supports both common setups (chosen automatically):
 - **PC + two TVs only (typical store setup)** - Both TVs show fullscreen menus. The admin editor runs behind them; press Esc or double-click a menu display to bring it to the front.
 - **PC with its own monitor + two TVs** - The admin editor stays on the primary monitor and the TVs each show a fullscreen menu.
 
-You can override this under **App Settings → Monitor layout** in the admin editor, and use **Swap** if Hot Food and Drinks/Snacks come up on the wrong TVs.
+You can override this under **App Settings** in the admin editor: **Monitor layout** changes the automatic behavior, **Swap** flips which TV gets Hot Food vs Drinks/Snacks, and the **TV 1 monitor / TV 2 monitor** pickers pin each menu to an exact screen (numbered left to right). If a TV takes over the admin window's screen, the admin window moves itself to the remaining free screen.
 
 Configure all monitors in Windows Display Settings (right-click desktop, Display settings). Ensure each TV is set to "Extend" mode, not "Duplicate."
 

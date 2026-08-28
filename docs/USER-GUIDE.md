@@ -64,6 +64,7 @@ Expand **App Settings**:
 - **Start Menu Board automatically when Windows starts** - keep this checked on the store PC so the menus come back by themselves after a power cut or reboot.
 - **Monitor layout** - leave on "Automatic (recommended)". It puts the admin editor on the PC's own screen and a menu on each TV.
 - **Swap which TV shows Hot Food vs Drinks/Snacks** - use this if the menus come up on the wrong TVs.
+- **TV 1 monitor / TV 2 monitor** - the sure-fire option: pick exactly which screen each menu uses (screens are numbered left to right, as arranged in Windows Display Settings). The change happens immediately. If a TV takes over the admin window's screen, the admin window moves itself to the free screen.
 
 ## Closing vs. minimizing
 
@@ -86,7 +87,8 @@ Close Menu Board first (X, then Yes), then copy both to a USB stick. Do this eve
 | Problem | Fix |
 |---|---|
 | TVs are blank | Is the PC on? Is `MenuBoard.exe` running? Reboot the PC - if auto-start is on, everything comes back by itself. |
-| Menus are on the wrong TVs | App Settings → check "Swap which TV shows Hot Food vs Drinks/Snacks". |
+| Menus are on the wrong TVs | App Settings → check "Swap", or set "TV 1 monitor" / "TV 2 monitor" directly. |
+| A menu opens as a small window instead of fullscreen on its TV | App Settings → set that TV's monitor explicitly with the "TV 1 monitor" / "TV 2 monitor" pickers. |
 | One TV shows the desktop instead of a menu | Right-click desktop → Display settings → make sure the TV is in **Extend** mode (not Duplicate), then restart the app. |
 | Can't find the admin window | Press Esc or double-click on a TV menu. |
 | Text too small/large on a TV | Display Settings → drag Font Scale. |

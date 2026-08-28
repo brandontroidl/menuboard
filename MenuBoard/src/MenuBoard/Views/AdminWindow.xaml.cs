@@ -6,6 +6,7 @@ using Microsoft.Win32;
 using MenuItem = MenuBoard.Models.MenuItem;
 using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
+using TextBox = System.Windows.Controls.TextBox;
 
 namespace MenuBoard.Views;
 
@@ -100,8 +101,15 @@ public partial class AdminWindow : Window
 
     private void ItemField_LostFocus(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement fe && fe.Tag is MenuItem item && item.Id > 0)
-            ViewModel.SaveMenuItem(item);
+        if (sender is not TextBox tb || tb.Tag is not MenuItem item || item.Id <= 0)
+            return;
+
+        // The binding also updates its source on LostFocus, but its handler
+        // can run AFTER this one - saving would then persist the OLD value
+        // and the TVs wouldn't reflect the edit until the next unrelated
+        // save. Push the pending text into the entity explicitly first.
+        tb.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
+        ViewModel.SaveMenuItem(item);
     }
 
     private void AvailableToggle_Click(object sender, RoutedEventArgs e)

@@ -39,6 +39,19 @@ public class MenuDataService
         return _context.DisplaySettings.First(d => d.ScreenNumber == screenNumber);
     }
 
+    /// <summary>
+    /// Untracked copy of the display settings for read-only consumers.
+    /// The display windows must NOT use <see cref="GetDisplaySettings"/>:
+    /// EF returns the same tracked instance every call, so a ViewModel
+    /// property assignment sees an identical reference and never raises
+    /// PropertyChanged - theme changes (background, header, font scale)
+    /// would silently stop propagating to the TVs.
+    /// </summary>
+    public DisplaySettings GetDisplaySettingsSnapshot(int screenNumber)
+    {
+        return _context.DisplaySettings.AsNoTracking().First(d => d.ScreenNumber == screenNumber);
+    }
+
     public Category AddCategory(string name, int screenNumber)
     {
         var maxOrder = _context.Categories
