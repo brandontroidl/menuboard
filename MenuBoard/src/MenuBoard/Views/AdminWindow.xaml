@@ -118,6 +118,11 @@
                                   IsChecked="{Binding SwapDisplays}"
                                   Margin="0,5"/>
                         <StackPanel Orientation="Horizontal" Margin="0,5">
+                            <TextBlock Text="Admin monitor:" Width="120" VerticalAlignment="Center"/>
+                            <ComboBox ItemsSource="{Binding MonitorOptions}"
+                                      SelectedIndex="{Binding AdminMonitorOption}" Width="300"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,5">
                             <TextBlock Text="TV 1 monitor:" Width="120" VerticalAlignment="Center"/>
                             <ComboBox ItemsSource="{Binding MonitorOptions}"
                                       SelectedIndex="{Binding Tv1MonitorOption}" Width="300"/>

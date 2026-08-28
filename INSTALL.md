@@ -1,11 +1,17 @@
 # Installation Guide
 
+## Easiest: the one-click installer
+
+If you have `MenuBoardSetup.exe` (built with `.\build-installer.ps1`, which requires NSIS): double-click it on the store PC → **Install** → done. It installs per-user (no admin password), registers Menu Board to **start automatically on boot**, adds a Start Menu entry, and needs no .NET installed. Reinstalling or upgrading keeps the store's menu data. Give the owner `docs/OWNER-QUICKSTART.md` and you're finished.
+
+Everything below is for building from source or manual deployment.
+
 ## Option 1: Build from Source
 
 ### Prerequisites
 
 - Windows 10 or later
-- .NET 8 SDK (download from https://dotnet.microsoft.com/download/dotnet/8.0)
+- .NET 10 SDK (download from https://dotnet.microsoft.com/download/dotnet/10.0)
 
 ### Steps
 
@@ -27,8 +33,8 @@
 4. Publish a standalone executable (from the `MenuBoard` folder in PowerShell):
 
    ```
-   .\publish.ps1                  # store PC needs the .NET 8 Desktop Runtime
-   .\publish.ps1 -SelfContained   # bigger, but nothing to install on the store PC
+   .\publish.ps1                     # self-contained (default) - nothing to install on the store PC
+   .\publish.ps1 -FrameworkDependent # smaller, but store PC needs the .NET 10 Desktop Runtime (x64)
    ```
 
 5. The published application is in the `MenuBoard/publish/` directory. Run `MenuBoard.exe` from there, or copy the folder to a user-writable location on the target PC (e.g. `C:\MenuBoard`, not `C:\Program Files` - the app writes its database, images, and settings next to the exe).
@@ -112,7 +118,7 @@ For unattended kiosk operation, also consider:
 
 **TVs show nothing / display windows don't appear**
 - Check Windows Display Settings - TVs must be in "Extend" mode, not "Duplicate"
-- Restart the application after connecting monitors
+- Using a USB / USB-C display adapter (e.g. j5create)? Install its driver (DisplayLink or the maker's) and confirm both TVs show up in Windows Display Settings at all. The app automatically picks up displays that appear late or get replugged.
 
 **Menus are on the wrong TVs (Hot Food where Drinks should be)**
 - In the admin editor, expand App Settings and check "Swap which TV shows Hot Food vs Drinks/Snacks"
@@ -127,6 +133,11 @@ For unattended kiosk operation, also consider:
 **Images don't appear on the display**
 - Verify the image file is a supported format (JPG, PNG, BMP, GIF)
 - Images are copied to the `Images/` folder next to the executable - check that folder has write permissions
+
+**"To run this application, you must install .NET" - but .NET is installed**
+- Almost always a stale mixed `publish\` folder: an older self-contained publish overlaid by a newer framework-dependent one (or vice versa). The exe then ignores the runtime files next to it.
+- Fix: re-run `.\publish.ps1` - it now cleans the folder first (keeping your database, images, and settings) and produces a self-contained build that needs nothing installed.
+- If you deliberately use `-FrameworkDependent`, the machine needs the **.NET 10 Desktop Runtime, x64** specifically - not just the SDK or the plain ".NET Runtime". Check with `dotnet --list-runtimes` (look for `Microsoft.WindowsDesktop.App 10.0.x`).
 
 **Database issues**
 - The database file `menuboard.db` is next to the executable

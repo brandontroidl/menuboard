@@ -17,14 +17,15 @@ A Windows desktop application that drives two TVs as digital menu boards for a c
 ## Requirements
 
 - Windows 10 or later
-- .NET 8 Runtime (Desktop) - not needed if you publish self-contained (see INSTALL.md)
+- .NET 10 Runtime (Desktop) - not needed if you publish self-contained (see INSTALL.md)
 - Two TVs connected to the PC (an additional admin monitor is optional)
 
 ## Documentation
 
 | Doc | For | What's in it |
 |---|---|---|
-| [INSTALL.md](INSTALL.md) | Installer / IT | Build, publish, hardware setup, auto-start, troubleshooting |
+| [INSTALL.md](INSTALL.md) | Installer / IT | One-click installer, build, publish, hardware setup, troubleshooting |
+| [docs/OWNER-QUICKSTART.md](docs/OWNER-QUICKSTART.md) | Store owner | One-page plain-language card for daily use |
 | [docs/USER-GUIDE.md](docs/USER-GUIDE.md) | Store staff | Everyday how-to: prices, items, pictures, sold-out, backups |
 | [docs/TECHNICAL.md](docs/TECHNICAL.md) | Developers | Architecture, data model, build/test, known limitations |
 | [docs/HANDOFF.md](docs/HANDOFF.md) | Next owner | Runbooks (install, update, backup/restore, emergencies), maintenance |
@@ -56,7 +57,7 @@ MenuBoard/
 
 ## Tech Stack
 
-- .NET 8 / WPF
+- .NET 10 (LTS, supported to Nov 2028) / WPF
 - SQLite via Entity Framework Core
 - CommunityToolkit.Mvvm
 - MSTest

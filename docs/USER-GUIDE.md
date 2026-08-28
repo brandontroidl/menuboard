@@ -64,7 +64,7 @@ Expand **App Settings**:
 - **Start Menu Board automatically when Windows starts** - keep this checked on the store PC so the menus come back by themselves after a power cut or reboot.
 - **Monitor layout** - leave on "Automatic (recommended)". It puts the admin editor on the PC's own screen and a menu on each TV.
 - **Swap which TV shows Hot Food vs Drinks/Snacks** - use this if the menus come up on the wrong TVs.
-- **TV 1 monitor / TV 2 monitor** - the sure-fire option: pick exactly which screen each menu uses (screens are numbered left to right, as arranged in Windows Display Settings). The change happens immediately. If a TV takes over the admin window's screen, the admin window moves itself to the free screen.
+- **Admin monitor / TV 1 monitor / TV 2 monitor** - the sure-fire option: pick exactly which screen the admin console and each menu use (screens are numbered left to right, as arranged in Windows Display Settings; the built-in laptop screen is labeled). On "Automatic" the admin console sticks to the built-in screen and the menus take the other outputs - even through a splitter. Changes happen immediately.
 
 ## Closing vs. minimizing
 

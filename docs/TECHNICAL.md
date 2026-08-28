@@ -6,7 +6,7 @@ Architecture and implementation reference for developers maintaining or extendin
 
 | Layer | Choice | Notes |
 |---|---|---|
-| Runtime | .NET 8 (`net8.0-windows`) | WPF requires Windows; `UseWindowsForms` is also enabled for monitor enumeration |
+| Runtime | .NET 10 LTS (`net10.0-windows`) | WPF requires Windows; `UseWindowsForms` is also enabled for monitor enumeration |
 | UI | WPF, MVVM | `CommunityToolkit.Mvvm` source generators (`[ObservableProperty]`, `[RelayCommand]`) |
 | Data | SQLite via EF Core (`Microsoft.EntityFrameworkCore.Sqlite`) | Single file `menuboard.db` next to the exe |
 | App config | JSON (`settings.json` next to the exe) | Monitor layout + display swap; deliberately outside the DB (per-PC hardware config) |
@@ -34,7 +34,7 @@ Refresh must hand the ViewModel **new object instances** each time - the entitie
 ```
 MenuBoard/
   MenuBoard.sln
-  publish.ps1                    Deployment script (framework-dependent or -SelfContained)
+  publish.ps1                    Deployment script (self-contained by default; cleans stale output)
   src/MenuBoard/
     App.xaml(.cs)                Startup, DB bootstrap, monitor layout, ActivateAdmin()
     Models/                      Category, MenuItem, DisplaySettings (EF entities)
@@ -72,14 +72,15 @@ The schema is created with `EnsureCreated()` - **there are no EF migrations**. S
 `App.ApplyMonitorLayout()` (safe to re-run at runtime; the admin's settings raise `MonitorSettingsChanged` to trigger it):
 
 1. Enumerate monitors (`MonitorService`, WinForms `Screen.AllScreens`, divided by the primary window's DPI scale to get WPF units), sorted left-to-right then top-to-bottom - this ordering defines "Monitor 1..N" everywhere in the UI and in `settings.json`.
-2. **Explicit picks win:** `Tv1Monitor` / `Tv2Monitor` in `settings.json` (set via the App Settings pickers; -1 = automatic) pin a TV to a monitor index. Out-of-range indices (monitor unplugged) fall back to automatic.
-3. For any TV still unassigned, build the automatic pool per `MonitorLayout`:
-   - `Auto` (default): 2 monitors total → **both** are TVs (store PC hooked straight to the TVs); 3+ → non-primary monitors are TVs, primary keeps the admin.
-   - `AdminPlusTvs`: non-primary only.
-   - `AllMonitors`: every monitor, primary included.
+2. **Admin home:** explicit `AdminMonitor` pick → the built-in panel (detected via `QueryDisplayConfig` output technology: internal/eDP/LVDS - reliable even when a splitter/USB adapter shuffles which output is "primary") → the primary monitor.
+3. **Explicit picks win:** `Tv1Monitor` / `Tv2Monitor` in `settings.json` (set via the App Settings pickers; -1 = automatic) pin a TV to a monitor index. Out-of-range indices (monitor unplugged) fall back to automatic.
+4. For any TV still unassigned, build the automatic pool per `MonitorLayout`:
+   - `Auto` (default): 2 monitors total → **both** are TVs (store PC hooked straight to the TVs); 3+ → the admin's monitor is reserved, the rest are TVs.
+   - `AdminPlusTvs`: everything except the admin's monitor.
+   - `AllMonitors`: every monitor, admin's included.
    `SwapDisplays` reverses the pool; monitors already claimed by explicit picks are removed from it.
-4. Assign TV 1 → first available, TV 2 → next. A TV without a monitor becomes a preview window.
-5. `MoveAdminOffTvMonitors`: if some monitor is free of TVs but the admin window's center sits on a TV-covered monitor, the admin window is repositioned to the free monitor (the "console" screen).
+5. Assign TV 1 → first available, TV 2 → next. A TV without a monitor becomes a preview window.
+6. `PlaceAdmin`: centers the admin window on its designated monitor (preferring a TV-free monitor if the designated one is covered); no-op when it's already there.
 
 Escape hatch when menus cover every screen: `DisplayWindow` handles Esc and double-click by calling `App.ActivateAdmin()`, which restores/activates the admin and briefly toggles `Topmost` to hop above the borderless fullscreen windows.
 
@@ -100,9 +101,11 @@ All of it lives next to the exe, so an install is fully portable: copy the folde
 cd MenuBoard
 dotnet build
 dotnet test                      # MSTest; runs on Windows only (WPF-dependent TFM)
-.\publish.ps1                    # framework-dependent → publish\
-.\publish.ps1 -SelfContained     # bundles the runtime (no .NET install needed on target)
+.\publish.ps1                    # self-contained (default) → publish\ (no .NET install needed on target)
+.\publish.ps1 -FrameworkDependent  # smaller output; target needs .NET 10 Desktop Runtime (x64)
 ```
+
+`publish.ps1` deliberately cleans `publish\` first (preserving `menuboard.db`, `Images\`, `settings.json`): `dotnet publish` does not clean its output, and a folder mixing framework-dependent and self-contained publishes fails at launch with a misleading "install .NET" dialog - the framework-dependent `runtimeconfig.json`/apphost ignore the runtime files beside them and probe the machine instead.
 
 On a non-Windows CI/build agent, compilation works with `-p:EnableWindowsTargeting=true`; tests still need Windows to execute.
 
@@ -120,7 +123,7 @@ Not covered (would need UI automation): window placement, XAML bindings, the exi
 - **No EF migrations.** `EnsureCreated()` never alters an existing database. Adding a column to an entity will crash on stores with an existing `menuboard.db` unless you add a manual `ALTER TABLE` upgrade step (or accept deleting the DB). Prefer `settings.json` for new app-level config.
 - **Mixed DPI:** monitor bounds are scaled by the *primary* monitor's DPI factor. Fine when everything is 100% (typical for TVs); windows can land slightly off if the admin monitor uses display scaling and the TVs don't. Fix would be per-monitor DPI via `GetDpiForMonitor`.
 - **Orphaned images:** deleting an item doesn't delete its image file (intentional - files are cheap, and referencing bugs are not). `Images/` grows slowly; safe to clean manually against DB references.
-- **Monitor hot-plug:** layout is applied at startup and on settings changes, not on Windows display-change events. Plugging in a TV after launch → toggle a layout setting or restart the app. (Hook `SystemEvents.DisplaySettingsChanged` → `ApplyMonitorLayout()` if this becomes annoying.)
+- **Monitor hot-plug is handled:** `SystemEvents.DisplaySettingsChanged` → refresh the picker lists and re-run `ApplyMonitorLayout()`. This matters for USB display adapters (DisplayLink / USB-C hubs like j5create), whose outputs enumerate seconds after login - later than app startup on boot. The handler is idempotent; `PlaceAdmin` doesn't move a window already in position.
 - **Single edit surface:** the admin edits tracked entities directly; there's no undo. The confirmation on category delete is the item count at risk, not a soft-delete.
 
 ## Sensible extension points

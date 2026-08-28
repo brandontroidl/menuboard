@@ -38,6 +38,12 @@ public class AppSettings
 
     /// <summary>Explicit monitor for TV 2; -1 = automatic.</summary>
     public int Tv2Monitor { get; set; } = -1;
+
+    /// <summary>
+    /// Explicit monitor for the admin console; -1 = automatic (the built-in
+    /// laptop panel when one is detected, otherwise the primary monitor).
+    /// </summary>
+    public int AdminMonitor { get; set; } = -1;
 }
 
 /// <summary>

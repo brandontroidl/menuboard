@@ -4,7 +4,7 @@ Everything needed to own, operate, deploy, and maintain this project. If you are
 
 ## 1. What this is
 
-A Windows desktop app (.NET 8 / WPF) that turns a PC and two TVs into digital menu boards for a convenience store. TV 1 shows Hot Food / Meals, TV 2 shows Drinks / Snacks. A built-in admin editor on the same PC manages all content. Fully offline; all data is local.
+A Windows desktop app (.NET 10 / WPF) that turns a PC and two TVs into digital menu boards for a convenience store. TV 1 shows Hot Food / Meals, TV 2 shows Drinks / Snacks. A built-in admin editor on the same PC manages all content. Fully offline; all data is local.
 
 **Repository:** `menuboard` (git). Application code is under `MenuBoard/`.
 
@@ -14,6 +14,7 @@ A Windows desktop app (.NET 8 / WPF) that turns a PC and two TVs into digital me
 |---|---|---|
 | `README.md` | Everyone | Overview, features, quick start |
 | `INSTALL.md` | Installer / IT | Build, publish, hardware and monitor setup, first run, auto-start, troubleshooting |
+| `docs/OWNER-QUICKSTART.md` | Store owner (non-technical) | One-page card: daily use, change a price, sold out, TVs blank |
 | `docs/USER-GUIDE.md` | Store staff | Day-to-day how-to: prices, items, images, sold-out, look-and-feel, backups |
 | `docs/TECHNICAL.md` | Developers | Architecture, data model, monitor layout logic, build/test, known limitations |
 | `docs/HANDOFF.md` | Next owner | This file - runbooks, inventory, maintenance |
@@ -29,14 +30,16 @@ A Windows desktop app (.NET 8 / WPF) that turns a PC and two TVs into digital me
 | Item photos | `Images\` folder next to the exe |
 | App config | `settings.json` next to the exe (monitor layout, TV swap) |
 | Auto-start | Registry `HKCU\...\CurrentVersion\Run`, value `MenuBoard` (managed by the in-app checkbox) |
-| Dev requirements | Windows 10/11, .NET 8 SDK |
-| Store PC requirements | Windows 10/11; .NET 8 Desktop Runtime unless published with `-SelfContained` |
+| Dev requirements | Windows 10/11, .NET 10 SDK |
+| Store PC requirements | Windows 10/11; nothing else with the default self-contained publish (.NET 10 Desktop Runtime x64 only if published with `-FrameworkDependent`) |
 
 ## 4. Runbooks
 
 ### 4.1 Fresh install on a store PC
 
-1. On a dev machine: `cd MenuBoard` then `.\publish.ps1 -SelfContained` (self-contained means nothing to install on the store PC).
+Preferred: build `MenuBoardSetup.exe` once (`cd MenuBoard` then `.\build-installer.ps1`, requires NSIS) and just run it on the store PC - it installs to the user profile, sets start-on-boot, and adds a Start Menu entry. Then do steps 3, 5, 7, 8 below. Manual alternative:
+
+1. On a dev machine: `cd MenuBoard` then `.\publish.ps1` (self-contained by default - nothing to install on the store PC).
 2. Copy the whole `publish\` folder to the store PC (e.g., `C:\MenuBoard\`).
 3. Connect both TVs, set Windows display mode to **Extend**, TVs at 1920x1080, landscape.
 4. Run `MenuBoard.exe`. Admin opens on the PC screen; a fullscreen menu appears on each TV.
@@ -81,7 +84,7 @@ Follow 4.1 on the new PC, then copy `menuboard.db`, `Images\`, and `settings.jso
 
 ## 6. Development handoff
 
-- Prereqs: Windows + .NET 8 SDK. Any editor works; no other tooling required.
+- Prereqs: Windows + .NET 10 SDK. Any editor works; no other tooling required.
 - Build `dotnet build`, test `dotnet test`, run `dotnet run --project src/MenuBoard` (from `MenuBoard/`), deploy `.\publish.ps1`.
 - On a single-monitor dev machine the two TV windows open as resizable preview windows - you can develop everything without TVs.
 - Read `docs/TECHNICAL.md` before touching code; especially the data-change event flow, the monitor layout algorithm, and the no-migrations caveat.
@@ -97,7 +100,7 @@ Follow 4.1 on the new PC, then copy `menuboard.db`, `Images\`, and `settings.jso
 
 ## 8. Known limitations
 
-Summarized here; details in `docs/TECHNICAL.md`: no schema auto-migration; primary-monitor DPI assumption (keep TVs at 100% scaling); no monitor hot-plug handling (restart or re-apply a layout setting after plugging in a TV); no undo in the editor; orphaned image files are left on disk by design.
+Summarized here; details in `docs/TECHNICAL.md`: no schema auto-migration; primary-monitor DPI assumption (keep TVs at 100% scaling); no undo in the editor; orphaned image files are left on disk by design. Monitor hot-plug and late-arriving USB-adapter displays are handled automatically, but a USB display adapter (e.g. j5create) still needs its driver installed on the store PC.
 
 ## 9. Support quick reference
 

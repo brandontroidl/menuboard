@@ -49,6 +49,10 @@ public partial class AdminViewModel : ObservableObject
     [ObservableProperty]
     private int _tv2MonitorOption;
 
+    /// <summary>0 = Automatic (built-in panel, else primary); n = monitor n for the admin console.</summary>
+    [ObservableProperty]
+    private int _adminMonitorOption;
+
     private bool _suppressSettingCallbacks;
 
     public AdminViewModel(MenuDataService dataService, ImageService imageService,
@@ -60,26 +64,44 @@ public partial class AdminViewModel : ObservableObject
         _startupService = startupService;
         _monitorService = monitorService;
 
-        MonitorOptions.Add("Automatic");
+        _suppressSettingCallbacks = true;
+        StartWithWindows = _startupService.IsEnabled();
+        SwapDisplays = _appSettings.Settings.SwapDisplays;
+        MonitorLayoutIndex = (int)_appSettings.Settings.MonitorLayout;
+        _suppressSettingCallbacks = false;
+
+        RefreshMonitorOptions();
+        LoadCategories();
+        LoadDisplaySettings();
+    }
+
+    /// <summary>
+    /// Rebuilds the monitor picker list from what's connected right now and
+    /// re-syncs the selections from settings. Called at startup and whenever
+    /// Windows reports a display change - USB display adapters bring their
+    /// outputs up after login, so the list at startup can be incomplete.
+    /// </summary>
+    public void RefreshMonitorOptions()
+    {
         var monitors = _monitorService.GetMonitorsSorted();
+
+        _suppressSettingCallbacks = true;
+        MonitorOptions.Clear();
+        MonitorOptions.Add("Automatic");
         for (var i = 0; i < monitors.Count; i++)
         {
             var label = $"Monitor {i + 1} of {monitors.Count} (left to right)";
+            if (monitors[i].IsInternal)
+                label += " - built-in screen";
             if (monitors[i].IsPrimary)
                 label += " - primary";
             MonitorOptions.Add(label);
         }
 
-        _suppressSettingCallbacks = true;
-        StartWithWindows = _startupService.IsEnabled();
-        SwapDisplays = _appSettings.Settings.SwapDisplays;
-        MonitorLayoutIndex = (int)_appSettings.Settings.MonitorLayout;
         Tv1MonitorOption = ToOptionIndex(_appSettings.Settings.Tv1Monitor, monitors.Count);
         Tv2MonitorOption = ToOptionIndex(_appSettings.Settings.Tv2Monitor, monitors.Count);
+        AdminMonitorOption = ToOptionIndex(_appSettings.Settings.AdminMonitor, monitors.Count);
         _suppressSettingCallbacks = false;
-
-        LoadCategories();
-        LoadDisplaySettings();
     }
 
     private static int ToOptionIndex(int monitorIndex, int monitorCount)
@@ -99,6 +121,14 @@ public partial class AdminViewModel : ObservableObject
     {
         if (_suppressSettingCallbacks || value < 0) return;
         _appSettings.Settings.Tv2Monitor = value - 1;
+        _appSettings.Save();
+        MonitorSettingsChanged?.Invoke();
+    }
+
+    partial void OnAdminMonitorOptionChanged(int value)
+    {
+        if (_suppressSettingCallbacks || value < 0) return;
+        _appSettings.Settings.AdminMonitor = value - 1;
         _appSettings.Save();
         MonitorSettingsChanged?.Invoke();
     }
